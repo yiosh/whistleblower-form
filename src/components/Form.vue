@@ -264,11 +264,23 @@
                       <label>
                         <strong>Eventuali allegati a sostegno della segnalazione</strong>
                       </label>
-                      <v-btn color="#3581b5" dark @click.native="openFileDialog">Upload
+                      <v-btn color="#3581b5" dark @click.native="openFileDialog">Caricare
                         <v-icon right dark>cloud_upload</v-icon>
                       </v-btn>
-                      <input type="file" id="file-upload" @change="onFileChange">
-                      <p>{{ datiSegnalazione.fileList.name }}</p>
+                      <input
+                        type="file"
+                        style="display:none"
+                        multiple
+                        id="file-upload"
+                        @change="onFileChange"
+                      >
+                      <p v-for="file in datiSegnalazione.fileList" :key="file.name">
+                        <v-icon>attach_file</v-icon>
+                        {{ file.name }}
+                        <v-btn flat icon color="red" @click="removeFile(file.name)">
+                          <v-icon>close</v-icon>
+                        </v-btn>
+                      </p>
                     </v-flex>
                   </v-flex>
                 </v-layout>
@@ -286,6 +298,7 @@
 
 <script>
 import axios from "axios";
+import lodash from "lodash";
 
 export default {
   data: () => ({
@@ -358,40 +371,89 @@ export default {
       const [year, month, day] = date.split("-");
       return `${day}/${month}/${year}`;
     },
-    fileChanged(file) {
-      // handle file here. File will be an object.
-      // If multiple prop is true, it will return an object array of files.
-      this.datiSegnalazione.fileList.push(file);
-      console.log(file);
-    },
     openFileDialog() {
       document.getElementById("file-upload").click();
     },
+    removeFile(name) {
+      this.datiSegnalazione.fileList = lodash.dropWhile(
+        this.datiSegnalazione.fileList,
+        file => file.name == name
+      );
+      // this.datiSegnalazione.fileList = fileList;
+    },
     onFileChange(e) {
-      console.log(e.target.files);
       const files = e.target.files || e.dataTransfer.files;
-      console.log(files);
-      console.log(files.length);
-      console.log(files[0]);
-      // if (files.length > 0) {
-      // for (var i = 0; i < files.length; i++) {
-      this.formData.append("file", files[0], files[0].name);
-      // }
-      // }
+      console.log("Files", files);
+      if (files.length === 1) {
+        if (
+          lodash.findIndex(this.datiSegnalazione.fileList, file => {
+            return file.name == files[0].name;
+          }) === -1
+        ) {
+          this.datiSegnalazione.fileList.push(files[0]);
+        }
+      } else {
+        for (let i = 0; i < files.length; i++) {
+          if (
+            lodash.findIndex(this.datiSegnalazione.fileList, file => {
+              return file.name == files[i].name;
+            }) === -1
+          ) {
+            this.datiSegnalazione.fileList.push(files[i]);
+          }
+        }
+      }
     },
     handleFileUpload(e) {
       this.file = e.target.files;
     },
     formSubmit() {
-      console.log(this);
-      // const formData = new FormData();
       this.formData.append("nome", this.datiSegnalante.nome);
-      this.formData.append("cognome", "Daniel");
-      // this.formData.append("file", this.file);
+      this.formData.append("cognome", this.datiSegnalante.cognome);
+      this.formData.append(
+        "qualificaProfessionale",
+        this.datiSegnalante.qualifica
+      );
+      this.formData.append("sedeServizio", this.datiSegnalante.sedeServizio);
+      this.formData.append("telefono", this.datiSegnalante.telefono);
+      this.formData.append("email", this.datiSegnalante.email);
+      this.formData.append("dataDa", this.datiSegnalazione.dateDa);
+      this.formData.append("dataA", this.datiSegnalazione.dateA);
+      this.formData.append(
+        "luogoFatto",
+        this.datiSegnalazione.luogoFatto.selected +
+          ", " +
+          this.datiSegnalazione.luogoFatto.value
+      );
+      let selectedStr = "";
+      this.datiSegnalazione.azioniValore.selected.forEach(value => {
+        selectedStr += value + ", ";
+      });
+      if (this.datiSegnalazione.azioniValore.altroChecked) {
+        selectedStr += this.datiSegnalazione.azioniValore.altroValue;
+      }
+
+      selectedStr += this.formData.append("azioniValore", selectedStr);
+      this.formData.append(
+        "descrizioneFatto",
+        this.datiSegnalazione.descrizioneFatto
+      );
+      this.formData.append("autoreFatto", this.datiSegnalazione.autori);
+      this.formData.append(
+        "eventualiSoggetti",
+        this.datiSegnalazione.altriEventualiSoggeti
+      );
+
+      this.datiSegnalazione.fileList.forEach((file, index) => {
+        console.log("file", file);
+        this.formData.append("file" + index, file, file.name);
+      });
 
       axios
         .post(
-          "http://www.comune.bitetto.ba.it/nuovo/whistleblower/api.php",
+          window.location.hostname !== "localhost"
+            ? "http://www.comune.bitetto.ba.it/nuovo/whistleblower/api.php"
+            : "http://localhost:80/whistleblower-form/api/formUpload.php",
           this.formData,
           {
             headers: {
@@ -404,6 +466,9 @@ export default {
           console.log(response.data);
         });
     }
+  },
+  created() {
+    console.log(window.location.hostname);
   }
 };
 </script>
