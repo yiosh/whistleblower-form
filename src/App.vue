@@ -197,6 +197,8 @@ export default {
               console.log("twf");
               vm.$router.push({ path: "/" });
             }
+            this.searchSecretCode = "";
+            this.btnToggle = false;
           } else {
             this.handleSnackbar("error", true, "Nessun modulo trovato!");
           }
