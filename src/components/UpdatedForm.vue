@@ -258,8 +258,8 @@
                       <v-layout row wrap>
                         <v-flex xs11>
                           <v-combobox
-                            v-model="datiSegnalazione.altriEventualiSoggeti"
-                            :items="datiSegnalazione.altriEventualiSoggeti"
+                            v-model="datiSegnalazione.altriEventualiSoggetti"
+                            :items="datiSegnalazione.altriEventualiSoggetti"
                             hide-selected
                             label="Altri eventuali soggetti a conoscenza del fatto e/o in grado di riferire sul medesimo"
                             multiple
@@ -303,7 +303,7 @@
                 </v-layout>
               </v-container>
               <v-card-actions>
-                <v-btn color="success" type="submit" dark>Invia</v-btn>
+                <!-- <v-btn color="success" type="submit" dark>Invia</v-btn> -->
                 <v-btn @click="e1 = 2" flat>Indietro</v-btn>
               </v-card-actions>
             </v-stepper-content>
@@ -311,20 +311,6 @@
         </v-form>
       </v-flex>
     </v-layout>
-    <v-snackbar
-      v-model="snackbar.state"
-      :timeout="snackbar.timeout"
-      :top="snackbar.y === 'top'"
-      :color="snackbar.color"
-    >
-    {{ snackbar.text }}
-      <v-btn
-        flat
-        @click="snackbar = false"
-      >
-        Chiudi
-      </v-btn>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -333,17 +319,10 @@ import axios from "axios";
 import lodash from "lodash";
 
 export default {
+  props: ["updatedForm"],
   data: () => ({
     color: "success",
-    snackbar: {
-      color: "success",
-      state: false,
-      y: "top",
-      x: null,
-      mode: "",
-      timeout: 6000,
-      text: "Il modulo è stato inviato con successo."
-    },
+    snackbar: false,
     y: "top",
     x: null,
     mode: "",
@@ -396,7 +375,7 @@ export default {
       formId: null,
       descrizioneFatto: "",
       autori: [],
-      altriEventualiSoggeti: [],
+      altriEventualiSoggetti: [],
       eventualiAllegati: [],
       fileList: []
     }
@@ -457,7 +436,7 @@ export default {
       this.file = e.target.files;
     },
     formSubmit() {
-      this.formData.append("insertForm", true);
+      this.formData.append("updateForm", true);
       this.formData.append("nome", this.datiSegnalante.nome);
       this.formData.append("cognome", this.datiSegnalante.cognome);
       this.formData.append(
@@ -518,19 +497,13 @@ export default {
           }
         })
         .then(response => {
-          // console.log("saved successfully");
+          console.log("saved successfully");
           // response = JSON.parse(response.data);
           console.log("response", response.data);
 
-          this.formId = response.data.id;
-          vm.sendMail();
+          // this.formId = response.data.id;
+          // vm.sendMail();
           return response.data.id;
-        })
-        .catch(error => {
-          console.log(error);
-          this.snackbar.text = "Errore di rete";
-          this.snackbar.color = "error";
-          this.snackbar.state = true;
         });
     },
     insertCode(id, secretCode) {
@@ -550,13 +523,7 @@ export default {
           }
         })
         .then(response => {
-          console.log("insertCode response", response);
-        })
-        .catch(error => {
-          console.log(error);
-          this.snackbar.text = "Errore di rete";
-          this.snackbar.color = "error";
-          this.snackbar.state = true;
+          console.log("fetch Comments response", response.data);
         });
     },
     sendMail() {
@@ -565,7 +532,7 @@ export default {
       axios
         .post("mailer.php")
         .then(response => {
-          console.log("Mail response", response);
+          console.log("Mail response", response.data.code);
           let code = response.data.code;
           vm.code = code;
           return true;
@@ -576,6 +543,73 @@ export default {
           vm.$emit("mail-sent", vm.code);
           vm.$emit("form-submit");
         });
+    }
+  },
+  mounted() {
+    if (this.updatedForm.nome) {
+      this.datiSegnalante.nome = atob(this.updatedForm.nome);
+    } else {
+      this.datiSegnalante.anonimo = true;
+    }
+
+    if (this.updatedForm.cognome) {
+      this.datiSegnalante.cognome = atob(this.updatedForm.cognome);
+    }
+
+    if (this.updatedForm.qualificaProfessionale) {
+      this.datiSegnalante.qualifica = this.updatedForm.qualificaProfessionale;
+    }
+
+    if (this.updatedForm.sedeServizio) {
+      this.datiSegnalante.sedeServizio = this.updatedForm.sedeServizio;
+    }
+
+    if (this.updatedForm.telefono) {
+      this.datiSegnalante.telefono = atob(this.updatedForm.telefono);
+    }
+
+    if (this.updatedForm.email) {
+      this.datiSegnalante.email = atob(this.updatedForm.email);
+    }
+
+    if (this.updatedForm.autoreFatto) {
+      this.datiSegnalazione.autori.push(this.updatedForm.autoreFatto);
+    }
+
+    if (this.updatedForm.dataDa) {
+      this.datiSegnalazione.dateDa = this.updatedForm.dataDa;
+    }
+
+    if (this.updatedForm.dataA) {
+      this.datiSegnalazione.dateA = this.updatedForm.dataA;
+    }
+
+    if (this.updatedForm.luogoFatto) {
+      this.datiSegnalazione.luogoFatto.selected = this.updatedForm.luogoFatto[0];
+      this.datiSegnalazione.luogoFatto.value = this.updatedForm.luogoFatto[1];
+    }
+
+    if (this.updatedForm.azioniValore) {
+      this.datiSegnalazione.azioniValore.selected = this.updatedForm.azioniValore;
+    }
+
+    if (this.updatedForm.altriEventualiSoggetti) {
+      // if (this.updatedForm.altriEventualiSoggetti.length > 1) {
+      //   this.updatedForm.altriEventualiSoggetti.forEach(name => {
+      //     this.datiSegnalazione.altriEventualiSoggetti.push(name);
+      //   });
+      // } else {
+      //   this.datiSegnalazione.altriEventualiSoggetti = this.updatedForm.altriEventualiSoggetti;
+      // }
+      this.datiSegnalazione.altriEventualiSoggetti = this.updatedForm.altriEventualiSoggetti;
+    }
+
+    if (this.updatedForm.descrizioneFatto) {
+      this.datiSegnalazione.descrizioneFatto = this.updatedForm.descrizioneFatto;
+    }
+
+    if (this.updatedForm.autori) {
+      this.datiSegnalazione.autori = this.updatedForm.autori;
     }
   }
 };

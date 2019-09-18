@@ -1,30 +1,36 @@
 <?php
 
-$fileExistsFlag = 0; 
   $link = mysqli_connect("localhost","root","","aryma_bitetto") or die("Error ".mysqli_error($link));
 
-  $nome = base64_encode($_POST['nome']);
-  $cognome = base64_encode($_POST['cognome']);
-  $qualificaProfessionale = $_POST['qualificaProfessionale'];
-  $sedeServizio = $_POST['sedeServizio'];
-  $telefono = base64_encode($_POST['telefono']);
-  $email = base64_encode($_POST['email']);
-  $dataDa = $_POST['dataDa'];
-  $dataA = $_POST['dataA'];
-  $luogoFatto = $_POST['luogoFatto'];
-  $azioniValore = $_POST['azioniValore'];
-  $descrizioneFatto = $_POST['descrizioneFatto'];
-  $autoreFatto = $_POST['autoreFatto'];
-  $eventualiSoggetti = $_POST['eventualiSoggetti'];
+  if (isset($_POST['insertForm'])) {
+    insertForm($link);
+  }
 
-  $query = "INSERT INTO `fl_whistleblower` (`nome`, `cognome`, `qualifica_professionale`, `serde_servizio`, `telefono`, `email`, `data_da`, `data_a`, `luogo_fatto`, `azioni_valore`, `descrizione_fatto`, `autore_fatto`, `eventuali_soggetti`) VALUES ('$nome', '$cognome', '$qualificaProfessionale', '$sedeServizio', '$telefono', '$email', '$dataDa', '$dataA', '$luogoFatto', '$azioniValore', '$descrizioneFatto', '$autoreFatto', '$eventualiSoggetti');";
-  mysqli_query($link, $query);
-  $idRecord = mysqli_insert_id($link);
+  function insertForm($link) {
+    $nome = base64_encode($_POST['nome']);
+    $cognome = base64_encode($_POST['cognome']);
+    $qualificaProfessionale = $_POST['qualificaProfessionale'];
+    $sedeServizio = $_POST['sedeServizio'];
+    $telefono = base64_encode($_POST['telefono']);
+    $email = base64_encode($_POST['email']);
+    $dataDa = $_POST['dataDa'];
+    $dataA = $_POST['dataA'];
+    $luogoFatto = $_POST['luogoFatto'];
+    $azioniValore = $_POST['azioniValore'];
+    $descrizioneFatto = $_POST['descrizioneFatto'];
+    $autoreFatto = $_POST['autoreFatto'];
+    $eventualiSoggetti = $_POST['eventualiSoggetti'];
+    $fileExistsFlag = 0;
 
-  $query = "UPDATE `fl_whistleblower` SET `eventualli_allegati`=$idRecord WHERE id='$idRecord'";
-  mysqli_query($link, $query);
+
+    $query = "INSERT INTO `fl_whistleblower` (`nome`, `cognome`, `qualifica_professionale`, `serde_servizio`, `telefono`, `email`, `data_da`, `data_a`, `luogo_fatto`, `azioni_valore`, `descrizione_fatto`, `autore_fatto`, `eventuali_soggetti`) VALUES ('$nome', '$cognome', '$qualificaProfessionale', '$sedeServizio', '$telefono', '$email', '$dataDa', '$dataA', '$luogoFatto', '$azioniValore', '$descrizioneFatto', '$autoreFatto', '$eventualiSoggetti');";
+    mysqli_query($link, $query);
+    $idRecord = mysqli_insert_id($link);
+
+    $query = "UPDATE `fl_whistleblower` SET `eventualli_allegati`=$idRecord WHERE id='$idRecord'";
+    mysqli_query($link, $query);
   
-  // for ($x = 0; $x < sizeof($_FILES); $x++) {
+    // for ($x = 0; $x < sizeof($_FILES); $x++) {
     // echo "The number is: $x <br>";
   
     /* 
@@ -97,7 +103,9 @@ $fileExistsFlag = 0;
     else {
       echo "File <html><b><i>".$fileName."</i></b></html> already exists in your folder. Please rename the file and try again.";
       mysqli_close($link);
-    } 
+    }
+  }
+
+  
   // }
   mysqli_close($link);
-?>
