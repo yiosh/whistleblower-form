@@ -41,8 +41,8 @@
 
     <v-content>
         <!-- <Landing/> -->
-        <v-container fluid>
-      <transition name="fade">
+        <!-- <v-container fluid>
+      
           <v-layout v-if="!codeExist" wrap>
             <v-flex xs12>
               <Form @form-submit="handleFormSubmit" @mail-sent="handleMailSent" v-if="formSubmit === false"/>
@@ -50,7 +50,7 @@
             </v-flex>
             
           </v-layout>
-      </transition>
+      
 
       <transition name="fade">
         <v-layout v-if="codeExist" wrap>
@@ -63,8 +63,8 @@
           </v-flex>
         </v-layout>
       </transition>
-        </v-container>
-      
+        </v-container> -->
+      <router-view/>
     </v-content>
     <v-snackbar
       v-model="snackbar.state"
@@ -80,63 +80,27 @@
         Chiudi
       </v-btn>
     </v-snackbar>
-    <v-dialog
-      v-model="dialog"
-    >
-      <v-card>
-        <v-card-title
-          class="headline grey lighten-2"
-          primary-title
-        >
-          Hai già effettuato una segnalazione?
-        </v-card-title>
-
-        <v-card-text>
-          <v-text-field
-            :loading="loading"
-            prepend-icon="vpn_key"
-            label="Inserisci il tuo Codice"
-            v-model="searchSecretCode"
-          ></v-text-field>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="success" @click="handleSearchForm">
-            Invia
-          </v-btn>
-          <v-btn
-            color="primary"
-            flat
-            @click="dialog = false"
-          >
-            Chiudi
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-app>
 </template>
 
 <script>
-import Form from "./components/Form";
-import UpdatedForm from "./components/UpdatedForm";
-import ThankYouPage from "./components/ThankYouPage";
-import Header from "./components/Header";
-import Comments from "./components/Comments";
+// import Form from "./components/Form";
+// import UpdatedForm from "./components/UpdatedForm";
+// import ThankYouPage from "./components/ThankYouPage";
+// import Header from "./components/Header";
+// import Comments from "./components/Comments";
+import EventBus from "@/eventBus.js";
 import axios from "axios";
 
 export default {
   name: "App",
-  components: {
-    Form,
-    UpdatedForm,
-    ThankYouPage,
-    Header,
-    Comments
-  },
+  // components: {
+  //   Form,
+  //   UpdatedForm,
+  //   ThankYouPage,
+  //   Header,
+  //   Comments
+  // },
   data() {
     return {
       dialog: false,
@@ -144,30 +108,6 @@ export default {
       btnToggle: false,
       loading: false,
       code: "",
-      header: {
-        context: "Whistleblower",
-        createdAt: "",
-        updatedAt: "",
-        expiresAt: ""
-      },
-      updatedForm: {
-        autoreFatto: "",
-        azioniValore: [],
-        cognome: "",
-        dataA: "0000-00-00",
-        dataDa: "0000-00-00",
-        descrizioneFatto: "",
-        email: "",
-        altriEventualiSoggetti: [],
-        eventualliAllegati: "81",
-        id: "81",
-        luogoFatto: "null, ",
-        nome: "",
-        qualificaProfessionale: "",
-        secretCode: "MTU1Nzg1MDk4Mg",
-        sedeServizio: "",
-        telefono: ""
-      },
       formData: new FormData(),
       searchSecretCode: "",
       codeExist: false,
@@ -186,76 +126,91 @@ export default {
     handleDialogToggle() {
       this.dialog = !this.dialog;
     },
-    handleFormSubmit() {
-      this.snackbar.state = true;
-      this.formSubmit = true;
-    },
-    handleMailSent(code) {
-      this.code = code;
-      console.log("mailsent");
-      console.log("Code: ", code);
+    handleSnackbar(color, state, text) {
+      this.snackbar = Object.assign(
+        {},
+        {
+          color,
+          state,
+          text,
+          y: "top",
+          x: null,
+          mode: "",
+          timeout: 6000
+        }
+      );
     },
     handleSearchForm() {
       this.loading = true;
       this.formData.append("fetchForm", true);
       this.formData.append("secretCode", this.searchSecretCode);
 
+      let vm = this;
+      let endpoint =
+        location.hostname === "localhost"
+          ? "http://www.comune.bitetto.ba.it/whistleblower/"
+          : "";
+
       axios
-        .post("api.php", this.formData, {
+        .post(endpoint + "api.php", this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
         })
         .then(response => {
           if (response.data != false) {
-            this.loading = false;
+            let updatedForm = {};
             console.log("Fetch form response: ", response);
-            this.updatedForm.nome = response.data.nome;
-            this.updatedForm.autoreFatto = response.data.autore_fatto;
-            this.updatedForm.azioniValore = response.data.azioni_valore.split(
-              ", "
-            );
-            this.updatedForm.cognome = response.data.cognome;
-            this.updatedForm.dataA = response.data.data_a;
-            this.updatedForm.dataDa = response.data.data_da;
-            this.updatedForm.descrizioneFatto = response.data.descrizione_fatto;
-            this.updatedForm.email = response.data.email;
-            this.updatedForm.id = response.data.id;
-            this.updatedForm.altriEventualiSoggetti = response.data.eventuali_soggetti.split(
+            updatedForm.nome = response.data.nome;
+            updatedForm.autoreFatto = response.data.autore_fatto;
+            updatedForm.azioniValore = response.data.azioni_valore.split(", ");
+            updatedForm.cognome = response.data.cognome;
+            updatedForm.dataA = response.data.data_a;
+            updatedForm.dataDa = response.data.data_da;
+            updatedForm.descrizioneFatto = response.data.descrizione_fatto;
+            updatedForm.email = response.data.email;
+            updatedForm.id = response.data.id;
+            updatedForm.altriEventualiSoggetti = response.data.eventuali_soggetti.split(
               ","
             );
-            this.updatedForm.luogoFatto = response.data.luogo_fatto.split(", ");
-            this.updatedForm.qualificaProfessionale =
+            updatedForm.luogoFatto = response.data.luogo_fatto.split(", ");
+            updatedForm.qualificaProfessionale =
               response.data.qualifica_professionale;
-            this.updatedForm.secretCode = response.data.secret_code;
-            this.updatedForm.sedeServizio = response.data.sede_servizio;
-            this.updatedForm.telefono = response.data.telefono;
+            updatedForm.secretCode = response.data.secret_code;
+            updatedForm.sedeServizio = response.data.sede_servizio;
+            updatedForm.telefono = response.data.telefono;
 
-            this.header.createdAt = response.data.created_at;
-            this.header.updatedAt = response.data.updated_at;
-            this.header.expiresAt = response.data.expires_at;
+            let header = {};
+            header.createdAt = response.data.created_at;
+            header.updatedAt = response.data.updated_at;
+            header.expiresAt = response.data.expires_at;
 
-            this.formSubmit = false;
-            if (this.codeExist) {
-              this.codeExist = false;
-            }
-            this.codeExist = true;
-            if (this.dialog) {
-              this.dialog = false;
+            if (location.hash !== "#/result") {
+              vm.$router.push({
+                name: "result",
+                params: {
+                  header,
+                  updatedForm
+                }
+              });
+            } else {
+              console.log("twf");
+              vm.$router.push({ path: "/" });
             }
           } else {
-            this.snackbar.text = "Nessun modulo trovato!";
-            this.snackbar.color = "error";
-            this.snackbar.state = true;
-            this.loading = false;
-            // this.snackbar.text = "Il modulo è stato inviato con successo.";
-            // this.snackbar.color = "success";
+            this.handleSnackbar("error", true, "Nessun modulo trovato!");
           }
+          this.loading = false;
         });
     },
     handleToggle() {
       this.btnToggle = true;
     }
+  },
+  mounted() {
+    EventBus.$on("snackbar", payload => {
+      this.handleSnackbar(payload.color, payload.state, payload.text);
+    });
   }
 };
 </script>

@@ -1,19 +1,5 @@
 <template>
   <v-container>
-    <v-snackbar
-      v-model="snackbar.state"
-      :timeout="snackbar.timeout"
-      :top="snackbar.y === 'top'"
-      :color="snackbar.color"
-    >
-    {{ snackbar.text }}
-      <v-btn
-        flat
-        @click="snackbar = false"
-      >
-        Chiudi
-      </v-btn>
-    </v-snackbar>
     <v-layout text-xs-center wrap>
       <v-flex xs12>
         <v-toolbar>
@@ -60,6 +46,7 @@
 </template>
 
 <script>
+import EventBus from "@/eventBus.js";
 import axios from "axios";
 
 export default {
@@ -86,8 +73,13 @@ export default {
       this.formData.append("fetchComments", true);
       this.formData.append("formId", this.formId);
 
+      let endpoint =
+        location.hostname === "localhost"
+          ? "http://www.comune.bitetto.ba.it/whistleblower/"
+          : "";
+
       axios
-        .post("api.php", this.formData, {
+        .post(endpoint + "api.php", this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -103,7 +95,6 @@ export default {
             };
             this.items.push(newComment);
           });
-          // console.log("insertCode response", response.data);
         })
         .catch(error => {
           console.log(error);
@@ -118,8 +109,13 @@ export default {
       this.formData.append("formId", this.formId);
       this.formData.append("text", this.comment);
 
+      let endpoint =
+        location.hostname === "localhost"
+          ? "http://www.comune.bitetto.ba.it/whistleblower/"
+          : "";
+
       axios
-        .post("api.php", this.formData, {
+        .post(endpoint + "api.php", this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -133,14 +129,22 @@ export default {
             subtitle: new Date().toLocaleString().replace(/\//g, "-")
           };
           this.items.push(newComment);
+
+          EventBus.$emit("snackbar", {
+            color: "success",
+            state: true,
+            text: "Il commento è stato inviato con successo."
+          });
           this.snackbar.state = true;
           this.comment = "";
         })
         .catch(error => {
           console.log(error);
-          this.snackbar.text = "Errore di rete";
-          this.snackbar.color = "error";
-          this.snackbar.state = true;
+          EventBus.$emit("snackbar", {
+            color: "error",
+            state: true,
+            text: "Errore di rete!"
+          });
         });
     }
   },

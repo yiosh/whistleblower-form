@@ -329,11 +329,16 @@
 </template>
 
 <script>
+import EventBus from "@/eventBus.js";
 import axios from "axios";
 import lodash from "lodash";
 
 export default {
   data: () => ({
+    endpoint:
+      location.hostname === "localhost"
+        ? "http://www.comune.bitetto.ba.it/whistleblower/"
+        : "",
     color: "success",
     snackbar: {
       color: "success",
@@ -512,14 +517,12 @@ export default {
       const vm = this;
 
       axios
-        .post("api.php", this.formData, {
+        .post(this.endpoint + "api.php", this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
         })
         .then(response => {
-          // console.log("saved successfully");
-          // response = JSON.parse(response.data);
           console.log("response", response.data);
 
           this.formId = response.data.id;
@@ -527,16 +530,15 @@ export default {
           return response.data.id;
         })
         .catch(error => {
+          EventBus.$emit("snackbar", {
+            color: "success",
+            state: true,
+            text: "this is a test"
+          });
           console.log(error);
-          this.snackbar.text = "Errore di rete";
-          this.snackbar.color = "error";
-          this.snackbar.state = true;
         });
     },
     insertCode(id, secretCode) {
-      console.log("id", id);
-      console.log("secretCode", secretCode);
-
       const vm = this;
       this.formData = new FormData();
       this.formData.append("insertCode", true);
@@ -544,26 +546,34 @@ export default {
       this.formData.append("secretCode", secretCode);
 
       axios
-        .post("api.php", vm.formData, {
+        .post(this.endpoint + "api.php", vm.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
         })
         .then(response => {
+          this.$router.push({
+            name: "thankyou",
+            params: {
+              code: response.data.code
+            }
+          });
           console.log("insertCode response", response);
         })
         .catch(error => {
           console.log(error);
-          this.snackbar.text = "Errore di rete";
-          this.snackbar.color = "error";
-          this.snackbar.state = true;
+          EventBus.$emit("snackbar", {
+            color: "error",
+            state: true,
+            text: "Errore di rete!"
+          });
         });
     },
     sendMail() {
       const vm = this;
 
       axios
-        .post("mailer.php")
+        .post(this.endpoint + "mailer.php")
         .then(response => {
           console.log("Mail response", response);
           let code = response.data.code;
@@ -573,8 +583,15 @@ export default {
         .then(() => {
           // console.log("fcode", this.code);
           vm.insertCode(vm.formId, vm.code);
-          vm.$emit("mail-sent", vm.code);
-          vm.$emit("form-submit");
+          // vm.$emit("mail-sent", vm.code);
+        })
+        .catch(error => {
+          EventBus.$emit("snackbar", {
+            color: "error",
+            state: true,
+            text: "Errore di rete"
+          });
+          console.log(error);
         });
     }
   }

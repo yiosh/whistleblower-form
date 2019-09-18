@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
      <v-layout text-xs-center>
       <v-flex xs12>
         <h1>Grazie!</h1>
@@ -18,7 +18,13 @@
 
 <script>
 export default {
-  props: ["code"]
+  name: "thankyou",
+  props: ["code"],
+  created() {
+    if (!this.code) {
+      this.$router.push("/");
+    }
+  }
 };
 </script>
 
