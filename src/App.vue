@@ -3,11 +3,11 @@
     <v-toolbar app dark color="#3581b5">
       <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
       <v-toolbar-title class="headline text-uppercase">
-        <span>Città di Bitetto</span>
+        <router-link to="/"><span >Città di Bitetto</span></router-link>
         
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn
+      <!-- <v-btn
         class="hidden-sm-and-up"
         color="warning"
         dark
@@ -19,24 +19,24 @@
         @click="handleDialogToggle"
       >
         <v-icon>vpn_key</v-icon>
-      </v-btn>
-      <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat v-show="!btnToggle" @click="handleToggle">Hai già effettuato una segnalazione?</v-btn>
-        <v-text-field
-          v-show="btnToggle"
+      </v-btn> -->
+      
+      
+      <v-toolbar-items>
+        
+        <!-- <v-text-field
           :loading="loading"
           prepend-icon="vpn_key"
           color="white"
           :clearable="true"
           label="Inserisci il tuo Codice"
           v-model="searchSecretCode"
-        ></v-text-field>
-        <v-btn v-show="btnToggle" @click="handleSearchForm" icon>
-          <v-icon>send</v-icon>
+        ></v-text-field> -->
+        
+        <v-btn :loading="loadingBtn" @click="handleModal" icon>
+          <v-icon>vpn_key</v-icon>
         </v-btn>
-      </v-toolbar-items>
-      
-                
+      </v-toolbar-items>      
     </v-toolbar>
 
     <v-content>
@@ -80,6 +80,7 @@
         Chiudi
       </v-btn>
     </v-snackbar>
+    <Modal />
   </v-app>
 </template>
 
@@ -89,11 +90,15 @@
 // import ThankYouPage from "./components/ThankYouPage";
 // import Header from "./components/Header";
 // import Comments from "./components/Comments";
+import Modal from "@/components/Modal";
 import EventBus from "@/eventBus.js";
 import axios from "axios";
 
 export default {
   name: "App",
+  components: {
+    Modal
+  },
   // components: {
   //   Form,
   //   UpdatedForm,
@@ -103,6 +108,7 @@ export default {
   // },
   data() {
     return {
+      loadingBtn: false,
       dialog: false,
       formSubmit: false,
       btnToggle: false,
@@ -119,8 +125,20 @@ export default {
         mode: "",
         timeout: 6000,
         text: "Il modulo è stato inviato con successo."
-      }
+      },
+      endpoint:
+        location.hostname === "localhost"
+          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
+          : ""
     };
+  },
+  computed: {
+    isLanding() {
+      if (location.hash !== "#/") {
+        return false;
+      }
+      return true;
+    }
   },
   methods: {
     handleDialogToggle() {
@@ -140,74 +158,36 @@ export default {
         }
       );
     },
-    handleSearchForm() {
-      this.loading = true;
-      this.formData.append("fetchForm", true);
-      this.formData.append("secretCode", this.searchSecretCode);
+    async handleModal() {
+      this.loadingBtn = true;
+      let formData = new FormData();
+      formData.append("checkSession", true);
 
-      let vm = this;
-      let endpoint =
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower/"
-          : "";
-
-      axios
-        .post(endpoint + "api.php", this.formData, {
+      try {
+        const response = await axios.post(this.endpoint + "api.php", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
-        })
-        .then(response => {
-          if (response.data != false) {
-            let updatedForm = {};
-            console.log("Fetch form response: ", response);
-            updatedForm.nome = response.data.nome;
-            updatedForm.autoreFatto = response.data.autore_fatto;
-            updatedForm.azioniValore = response.data.azioni_valore.split(", ");
-            updatedForm.cognome = response.data.cognome;
-            updatedForm.dataA = response.data.data_a;
-            updatedForm.dataDa = response.data.data_da;
-            updatedForm.descrizioneFatto = response.data.descrizione_fatto;
-            updatedForm.email = response.data.email;
-            updatedForm.id = response.data.id;
-            updatedForm.altriEventualiSoggetti = response.data.eventuali_soggetti.split(
-              ","
-            );
-            updatedForm.luogoFatto = response.data.luogo_fatto.split(", ");
-            updatedForm.qualificaProfessionale =
-              response.data.qualifica_professionale;
-            updatedForm.secretCode = response.data.secret_code;
-            updatedForm.sedeServizio = response.data.sede_servizio;
-            updatedForm.telefono = response.data.telefono;
-
-            let header = {};
-            header.createdAt = response.data.created_at;
-            header.updatedAt = response.data.updated_at;
-            header.expiresAt = response.data.expires_at;
-
-            if (location.hash !== "#/result") {
-              vm.$router.push({
-                name: "result",
-                params: {
-                  header,
-                  updatedForm
-                }
-              });
-            } else {
-              console.log("twf");
-              vm.$router.push({ path: "/" });
-            }
-            this.searchSecretCode = "";
-            this.btnToggle = false;
-          } else {
-            this.handleSnackbar("error", true, "Nessun modulo trovato!");
-          }
-          this.loading = false;
         });
+        console.log("response-check-session", response);
+        if (response.data.status === "OK") {
+          this.$router.push({
+            path: "/formlist"
+          });
+        } else {
+          EventBus.$emit("modal", true);
+        }
+        this.loadingBtn = false;
+      } catch (error) {
+        EventBus.$emit("snackbar", {
+          color: "error",
+          state: true,
+          text: "Errore di rete!"
+        });
+        console.log(error);
+      }
     },
-    handleToggle() {
-      this.btnToggle = true;
-    }
+    async handleCheckSession() {}
   },
   mounted() {
     EventBus.$on("snackbar", payload => {
@@ -217,7 +197,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+a {
+  color: white;
+  text-decoration: none;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;

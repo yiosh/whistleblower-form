@@ -1,28 +1,95 @@
 <template>
-  <v-container fluid>
-     <v-layout text-xs-center>
-      <v-flex xs12>
-        <v-card>
+  <v-container>
+     <v-layout text-xs-center justify-center>
+      <v-flex xs12 md6>
+        <v-card class="mb-4">
+          <v-toolbar dark color="#3581b5">
+              <v-toolbar-title>Hai già effettuato una segnalazione?</v-toolbar-title>
+            </v-toolbar>
           <v-card-text>
             <v-layout text-xs-center justify-center>
-              <v-flex xs3>
+              <v-flex xs12 md6>
                 <v-text-field
                 prepend-icon="vpn_key"
                 label="Inserisci Codice"
+                v-model="searchSecretCode"
                 ></v-text-field>
-                <v-btn>Nuova segnalazione</v-btn>
+                <v-btn :loading="loading" @click="handleSearchForm">Invia</v-btn>
+              </v-flex>
+            </v-layout>
+          </v-card-text>
+        </v-card>
+        <v-card>
+          <v-card-text>
+            <v-layout text-xs-center justify-center wrap>
+              <v-flex xs12>
+                <v-btn to="form">Nuova segnalazione</v-btn>
               </v-flex>
             </v-layout>
           </v-card-text>
         </v-card>
       </v-flex>
-    </v-layout>        
+    </v-layout>
   </v-container>
 </template>
 
 <script>
+import EventBus from "@/eventBus.js";
+import axios from "axios";
+
 export default {
-  props: ["code"]
+  data() {
+    return {
+      searchSecretCode: "",
+      loading: false
+    };
+  },
+  methods: {
+    handleSearchForm() {
+      if (this.searchSecretCode.length) {
+        this.loading = true;
+        let formData = new FormData();
+        formData.append("fetchForm", true);
+        formData.append("secretCode", this.searchSecretCode);
+
+        let vm = this;
+        let endpoint =
+          location.hostname === "localhost"
+            ? "http://www.comune.bitetto.ba.it/whistleblower/"
+            : "";
+
+        axios
+          .post(endpoint + "api.php", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(response => {
+            console.log("response", response);
+            if (response.data !== null) {
+              vm.$router.push({ path: `/form/${this.searchSecretCode}` });
+            } else {
+              EventBus.$emit("snackbar", {
+                color: "error",
+                state: true,
+                text: "Modulo non trovato!"
+              });
+            }
+          })
+          .catch(error => {
+            EventBus.$emit("snackbar", {
+              color: "error",
+              state: true,
+              text: "Errore di rete!"
+            });
+            console.log(error);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
+    }
+  }
 };
 </script>
 

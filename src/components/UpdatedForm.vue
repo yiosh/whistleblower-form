@@ -48,7 +48,7 @@
                     <v-text-field
                       v-model="datiSegnalante.nome"
                       label="Nome del segnalante"
-                      required
+                      disabled
                     ></v-text-field>
                   </v-flex>
 
@@ -56,7 +56,7 @@
                     <v-text-field
                       v-model="datiSegnalante.cognome"
                       label="Cognome del segnalante"
-                      required
+                      disabled
                     ></v-text-field>
                   </v-flex>
 
@@ -66,7 +66,7 @@
                         <v-text-field
                           v-model="datiSegnalante.qualifica"
                           label="Qualifica o posizione professionale"
-                          required
+                          disabled
                         ></v-text-field>
                       </v-flex>
                       <v-flex xs1>
@@ -84,16 +84,16 @@
                     <v-text-field
                       v-model="datiSegnalante.sedeServizio"
                       label="Sede di servizio"
-                      required
+                      disabled
                     ></v-text-field>
                   </v-flex>
 
                   <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.telefono" label="Telefono" required></v-text-field>
+                    <v-text-field v-model="datiSegnalante.telefono" label="Telefono" disabled></v-text-field>
                   </v-flex>
 
                   <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.email" label="Email" required></v-text-field>
+                    <v-text-field v-model="datiSegnalante.email" label="Email" disabled></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -132,13 +132,13 @@
                         v-model="dateDaFormatted"
                         label="Da"
                         append-icon="event"
-                        readonly
+                        disabled
                       ></v-text-field>
                       <v-date-picker
                         locale="it-it"
                         v-model="datiSegnalazione.dateDa"
-                        @input="dateChanged"
                       ></v-date-picker>
+                        <!-- @input="dateChanged" -->
                     </v-menu>
                   </v-flex>
                   <v-flex xs12 md6>
@@ -156,13 +156,13 @@
                         v-model="dateAFormatted"
                         label="A"
                         append-icon="event"
-                        readonly
+                        disabled
                       ></v-text-field>
                       <v-date-picker
                         locale="it-it"
                         v-model="datiSegnalazione.dateA"
-                        @input="datiSegnalazione.menu2 = false"
                       ></v-date-picker>
+                        <!-- @input="datiSegnalazione.menu2 = false" -->
                     </v-menu>
                   </v-flex>
                   <v-flex xs12 style="text-align: left">
@@ -177,6 +177,7 @@
                         :key="option.name"
                         :label="option.name"
                         :value="option.name"
+                        disabled
                       ></v-radio>
                     </v-radio-group>
                   </v-flex>
@@ -186,6 +187,7 @@
                       name="input-7-1"
                       label="Luogo o indirizzo della struttura"
                       v-model="datiSegnalazione.luogoFatto.value"
+                      disabled
                     ></v-textarea>
                   </v-flex>
                   <v-flex xs12 style="text-align: left">
@@ -206,6 +208,7 @@
                       :label="option"
                       :value="option"
                       :key="option"
+                      disabled
                     ></v-checkbox>
                     <v-layout row wrap>
                       <v-flex xs12 md3>
@@ -214,6 +217,7 @@
                           label="Altro"
                           :value="datiSegnalazione.azioniValore.altroChecked"
                           key="Altro"
+                          disabled
                         ></v-checkbox>
                       </v-flex>
                       <v-flex xs12 md9>
@@ -221,14 +225,16 @@
                           v-if="datiSegnalazione.azioniValore.altroChecked"
                           label="(Specificare)"
                           v-model="datiSegnalazione.azioniValore.altroValue"
+                          disabled
                         ></v-textarea>
                       </v-flex>
                     </v-layout>
                     <v-flex xs12 md9>
                       <v-textarea
-                      outline
+                        outline
                         label="Descrizione del fatto (Condotta ed evento)"
                         v-model="datiSegnalazione.descrizioneFatto"
+                        disabled
                       ></v-textarea>
                     </v-flex>
                     <v-flex xs12>
@@ -242,6 +248,7 @@
                             multiple
                             clearable
                             small-chips
+                            disabled
                           ></v-combobox>
                         </v-flex>
                         <v-flex xs1>
@@ -265,6 +272,7 @@
                             multiple
                             clearable
                             small-chips
+                            disabled
                           ></v-combobox>
                         </v-flex>
                         <v-flex xs1>
@@ -281,9 +289,9 @@
                       <label>
                         <strong>Eventuali allegati a sostegno della segnalazione</strong>
                       </label>
-                      <v-btn color="#3581b5" dark @click.native="openFileDialog">Caricare
+                      <!-- <v-btn color="#3581b5" dark @click.native="openFileDialog">Caricare
                         <v-icon right dark>cloud_upload</v-icon>
-                      </v-btn>
+                      </v-btn> -->
                       <input
                         type="file"
                         style="display:none"

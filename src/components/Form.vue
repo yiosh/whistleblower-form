@@ -35,72 +35,93 @@
             </v-stepper-step>
 
             <v-stepper-content step="2">
-              <v-container grid-list-md>
-                <v-layout row wrap>
-                  <v-flex xs12>
-                    <v-switch
-                      :label="`Anonimo? ${datiSegnalante.anonimo === false ? 'No' : 'Sì'}`"
-                      v-model="datiSegnalante.anonimo"
-                    ></v-switch>
-                  </v-flex>
+              <v-form ref="personalinfo">
+                <v-container grid-list-md>
+                  <v-layout row wrap>
+                    <v-flex xs12>
+                      <v-switch
+                        :label="`Anonimo? ${datiSegnalante.anonimo === false ? 'No' : 'Sì'}`"
+                        v-model="datiSegnalante.anonimo"
+                      ></v-switch>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field
-                      v-model="datiSegnalante.nome"
-                      label="Nome del segnalante"
-                      required
-                    ></v-text-field>
-                  </v-flex>
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-text-field
+                        v-model="datiSegnalante.nome"
+                        :rules="[v => !!v || 'Questo campo è obbligatorio']"
+                        label="Nome del segnalante"
+                        required
+                      ></v-text-field>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field
-                      v-model="datiSegnalante.cognome"
-                      label="Cognome del segnalante"
-                      required
-                    ></v-text-field>
-                  </v-flex>
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-text-field
+                        v-model="datiSegnalante.cognome"
+                        :rules="[v => !!v || 'Questo campo è obbligatorio']"
+                        label="Cognome del segnalante"
+                        required
+                      ></v-text-field>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-layout row wrap>
-                      <v-flex xs11>
-                        <v-text-field
-                          v-model="datiSegnalante.qualifica"
-                          label="Qualifica o posizione professionale"
-                          required
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs1>
-                        <v-tooltip bottom>
-                          <span slot="activator">
-                            <v-icon style="cursor: pointer">help_outline</v-icon>
-                          </span>
-                          <span>Qualora il segnalante rivesta la qualifica di pubblico ufficiale, l'invio della presente segnalazione non lo esonera dall'obbligo di denunciare alla competente Autorità giudiziaria i fatti penalmente rilevante e le ipotesi di danno erariale</span>
-                        </v-tooltip>
-                      </v-flex>
-                    </v-layout>
-                  </v-flex>
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-layout row wrap>
+                        <v-flex xs11>
+                          <v-text-field
+                            v-model="datiSegnalante.qualifica"
+                            label="Qualifica o posizione professionale"
+                            required
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs1>
+                          <v-tooltip bottom>
+                            <span slot="activator">
+                              <v-icon style="cursor: pointer">help_outline</v-icon>
+                            </span>
+                            <span>Qualora il segnalante rivesta la qualifica di pubblico ufficiale, l'invio della presente segnalazione non lo esonera dall'obbligo di denunciare alla competente Autorità giudiziaria i fatti penalmente rilevante e le ipotesi di danno erariale</span>
+                          </v-tooltip>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field
-                      v-model="datiSegnalante.sedeServizio"
-                      label="Sede di servizio"
-                      required
-                    ></v-text-field>
-                  </v-flex>
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-text-field
+                        v-model="datiSegnalante.sedeServizio"
+                        label="Sede di servizio"
+                        required
+                      ></v-text-field>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.telefono" label="Telefono" required></v-text-field>
-                  </v-flex>
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-text-field v-model="datiSegnalante.telefono" :rules="[v => !!v || 'Questo campo è obbligatorio']" label="Telefono" required></v-text-field>
+                    </v-flex>
 
-                  <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.email" label="Email" required></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-              <!-- </v-form> -->
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-text-field 
+                        v-model="datiSegnalante.email" 
+                        :rules="[
+                          v => !!v || 'Questo campo è obbligatorio',
+                          v => /.+@.+/.test(v) || 'L\'email deve essere valida'
+                        ]" 
+                        label="Email"
+                        required
+                      ></v-text-field>
+                    </v-flex>
+
+                    <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
+                      <v-checkbox
+                        v-model="checkbox"
+                        :rules="[v => !!v || 'Devi accettare di continuare!']"
+                        label="Autorizzo il trattamento dei miei dati ai fini della gestione di questa segnalazione."
+                        required
+                      ></v-checkbox>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
               <!-- <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card> -->
               <v-card-actions>
-                <v-btn color="#3581b5" dark @click="e1 = 3">Continua</v-btn>
+                <v-btn color="#3581b5" dark @click="validateInfo">Continua</v-btn>
+                <!-- <v-btn color="#3581b5" dark @click="e1 = 3">Continua</v-btn> -->
                 <v-btn @click="e1 = 1" flat>Indietro</v-btn>
               </v-card-actions>
             </v-stepper-content>
@@ -335,6 +356,7 @@ import lodash from "lodash";
 
 export default {
   data: () => ({
+    checkbox: false,
     endpoint:
       location.hostname === "localhost"
         ? "http://www.comune.bitetto.ba.it/whistleblower/"
@@ -415,6 +437,13 @@ export default {
     }
   },
   methods: {
+    validateInfo() {
+      if (this.$refs.personalinfo.validate()) {
+        this.e1 = 3;
+      }
+
+      console.log("refs", this.$refs.personalinfo);
+    },
     dateChanged() {
       this.datiSegnalazione.menu1 = false;
       this.datiSegnalazione.dateA = this.datiSegnalazione.dateDa;

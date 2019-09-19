@@ -22,12 +22,24 @@ if (isset($_POST['fetchForm'])) {
   fetchForm($_POST['secretCode']);
 }
 
+if (isset($_POST['fetchAllForms'])) {
+  fetchAllForms();
+}
+
 if (isset($_POST['fetchComments'])) {
   fetchComments($_POST['formId']);
 }
 
 if (isset($_POST['insertComment'])) {
   insertComment($_POST['formId'], $_POST['text']);
+}
+
+if (isset($_POST['checkPassword'])) {
+  checkPassword($_POST['password']);
+}
+
+if (isset($_POST['checkSession'])) {
+  checkSession();
 }
 
 
@@ -139,6 +151,22 @@ function fetchForm($secretCode)
   };
 }
 
+function fetchAllForms()
+{
+  $query = "SELECT * FROM `fl_whistleblower`";
+  $result = mysql_query($query, CONNECT);
+  if ($result->num_rows > 0) {
+    $arr = [];
+    while ($row = mysql_fetch_assoc($result)) {
+      $r = $row;
+      array_push($arr, $r);
+    };
+    echo json_encode($arr);
+  } else {
+    echo "Error:" . mysql_error(CONNECT);
+  };
+}
+
 function fetchComments($id)
 {
   $query = "SELECT * FROM `fl_whistleblower_comments` WHERE `form_id`='$id'";
@@ -169,6 +197,31 @@ function insertComment($formId, $text)
   } else {
     echo "Error:" . mysql_error(CONNECT);
   };
+}
+
+function checkPassword($password)
+{
+  ob_end_clean();
+  $password_set = "password";
+  if ($password === $password_set) {
+    if (!isset($_SESSION)) {
+      session_start();
+    }
+    $_SESSION['status'] = "OK";
+    echo json_encode(array("status" => "OK"));
+  } else {
+    echo json_encode(array("msg" => "Password errato"));
+  }
+}
+
+function checkSession()
+{
+  ob_end_clean();
+  if (isset($_SESSION['status'])) {
+    echo json_encode(array("status" => "OK"));
+  } else {
+    echo json_encode(array("status" => "KO"));
+  }
 }
 
 

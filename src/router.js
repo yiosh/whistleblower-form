@@ -10,12 +10,24 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: Home
+      component: Landing
     },
     {
-      path: "/result",
-      name: "result",
+      path: "/form",
+      name: "form",
+      component: () =>
+        import(/* webpackChunkName: "about" */ "./views/Home.vue")
+    },
+    {
+      path: "/formlist",
+      name: "formlist",
       props: true,
+      component: () =>
+        import(/* webpackChunkName: "about" */ "./views/FormList.vue")
+    },
+    {
+      path: "/form/:secret",
+      name: "forms",
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/ResultForm.vue")
     },
