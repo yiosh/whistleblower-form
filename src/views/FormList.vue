@@ -19,13 +19,13 @@
         
         <v-card v-for="item in filterItems" :key="item.id" class="mb-3">
            <v-toolbar dark color="#3581b5">
-              <v-toolbar-title>Modulo ID#{{ item.id }}</v-toolbar-title>
+              <v-toolbar-title>Segnalazione ID#{{ item.id }}</v-toolbar-title>
             </v-toolbar>
           
           <v-card-actions>
             <small>{{ item.created_at }}</small>
             <v-layout justify-end>
-            <v-btn @click="handleRedirect(item.secret_code)" flat>Vedi Modulo</v-btn>
+            <v-btn @click="handleRedirect(item.secret_code)" flat>Vedi Segnalazione</v-btn>
             </v-layout>
           </v-card-actions>
         </v-card>
