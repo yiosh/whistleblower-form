@@ -40,11 +40,6 @@ export default {
     return {
       items: [
         {
-          icon: "inbox",
-          title: "Contesto",
-          subtitle: "14-05-2019 12:12"
-        },
-        {
           icon: "query_builder",
           title: "Data di creazione",
           subtitle: "14-05-2019 12:05"
@@ -53,28 +48,17 @@ export default {
           icon: "restore",
           title: "Ultimo aggiornamento",
           subtitle: "14-05-2019 12:04"
-        },
-        {
-          icon: "hourglass_full",
-          title: "Data di scadenza",
-          subtitle: "14-05-2019 12:04"
         }
       ]
     };
   },
   mounted() {
-    this.items[0].subtitle = this.header.context;
-
     if (this.header.createdAt) {
-      this.items[1].subtitle = this.header.createdAt;
+      this.items[0].subtitle = this.header.createdAt;
     }
 
     if (this.header.updatedAt) {
-      this.items[2].subtitle = this.header.updatedAt;
-    }
-
-    if (this.header.expiresAt) {
-      this.items[3].subtitle = this.header.expiresAt;
+      this.items[1].subtitle = this.header.updatedAt;
     }
   }
 };
