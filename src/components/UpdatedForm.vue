@@ -292,19 +292,25 @@
                       <!-- <v-btn color="#3581b5" dark @click.native="openFileDialog">Caricare
                         <v-icon right dark>cloud_upload</v-icon>
                       </v-btn> -->
-                      <input
+                      <!-- <input
                         type="file"
                         style="display:none"
                         multiple
                         id="file-upload"
                         @change="onFileChange"
+                      > -->
+                      <p 
+                        v-for="file in datiSegnalazione.fileList" 
+                        :key="file.file"
                       >
-                      <p v-for="file in datiSegnalazione.fileList" :key="file.name">
-                        <v-icon>attach_file</v-icon>
-                        {{ file.name }}
-                        <v-btn flat icon color="red" @click="removeFile(file.name)">
-                          <v-icon>close</v-icon>
-                        </v-btn>
+                        <a
+                          style="text-decoration: none;"
+                          :href="file.path + '/' +  file.file" 
+                          download 
+                        >
+                          <v-icon>save_alt</v-icon>
+                          {{ file.file }}
+                        </a>
                       </p>
                     </v-flex>
                   </v-flex>
@@ -618,6 +624,10 @@ export default {
 
     if (this.updatedForm.autori) {
       this.datiSegnalazione.autori = this.updatedForm.autori;
+    }
+
+    if (this.updatedForm.fileList) {
+      this.datiSegnalazione.fileList = this.updatedForm.fileList;
     }
   }
 };

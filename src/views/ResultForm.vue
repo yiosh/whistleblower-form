@@ -64,35 +64,38 @@ export default {
         .then(response => {
           if (response.data != false) {
             console.log("Fetch form response: ", response);
+            let fileList = response.data.files == [] ? "" : response.data.files;
             vm.updatedForm = Object.assign(
               {},
               {
-                nome: response.data.nome,
-                autoreFatto: response.data.autore_fatto,
-                cognome: response.data.cognome,
-                azioniValore: response.data.azioni_valore.split(", "),
-                dataA: response.data.data_a,
-                dataDa: response.data.data_da,
-                descrizioneFatto: response.data.descrizione_fatto,
-                email: response.data.email,
-                id: response.data.id,
-                altriEventualiSoggetti: response.data.eventuali_soggetti.split(
+                nome: response.data.form.nome,
+                autoreFatto: response.data.form.autore_fatto,
+                cognome: response.data.form.cognome,
+                azioniValore: response.data.form.azioni_valore.split(", "),
+                dataA: response.data.form.data_a,
+                dataDa: response.data.form.data_da,
+                descrizioneFatto: response.data.form.descrizione_fatto,
+                email: response.data.form.email,
+                id: response.data.form.id,
+                altriEventualiSoggetti: response.data.form.eventuali_soggetti.split(
                   ","
                 ),
-                luogoFatto: response.data.luogo_fatto.split(", "),
-                qualificaProfessionale: response.data.qualifica_professionale,
-                secretCode: response.data.secret_code,
-                sedeServizio: response.data.sede_servizio,
-                telefono: response.data.telefono
+                luogoFatto: response.data.form.luogo_fatto.split(", "),
+                qualificaProfessionale:
+                  response.data.form.qualifica_professionale,
+                secretCode: response.data.form.secret_code,
+                sedeServizio: response.data.form.sede_servizio,
+                telefono: response.data.form.telefono,
+                fileList
               }
             );
 
             vm.header = Object.assign(
               {},
               {
-                createdAt: response.data.created_at,
-                updatedAt: response.data.updated_at,
-                expiresAt: response.data.expires_at
+                createdAt: response.data.form.created_at,
+                updatedAt: response.data.form.updated_at,
+                expiresAt: response.data.form.expires_at
               }
             );
           } else {

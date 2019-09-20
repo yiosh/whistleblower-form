@@ -64,7 +64,7 @@ function insertForm()
   $query = "INSERT INTO `fl_whistleblower` (`nome`, `cognome`, `qualifica_professionale`, `sede_servizio`, `telefono`, `email`, `data_da`, `data_a`, `luogo_fatto`, `azioni_valore`, `descrizione_fatto`, `autore_fatto`, `eventuali_soggetti`, `created_at`,`updated_at`) VALUES ('$nome', '$cognome', '$qualificaProfessionale', '$sedeServizio', '$telefono', '$email', '$dataDa', '$dataA', '$luogoFatto', '$azioniValore', '$descrizioneFatto', '$autoreFatto', '$eventualiSoggetti', NOW(), NOW());";
   mysql_query($query, CONNECT);
   $idRecord = mysql_insert_id(CONNECT);
-
+  $msg = "";
 
   $query = "UPDATE `fl_whistleblower` SET `eventualli_allegati`=$idRecord WHERE id='$idRecord'";
   mysql_query($query, CONNECT);
@@ -75,8 +75,9 @@ function insertForm()
 
   if ($fileExistsFlag == 0) {
     if (sizeof($_FILES) > 1) {
+      mkdir("upload/" . $idRecord . "/");
       for ($i = 0; $i < sizeof($_FILES); $i++) {
-        $target = "upload/";
+        $target = "upload/" . $idRecord . "/";
         $fileName = $_FILES['file' . $i]['name'];
         echo $fileName;
         $fileTarget = $target . $fileName;
@@ -88,15 +89,16 @@ function insertForm()
         */
 
         if ($result) {
-          echo "Your file" . $fileName . " has been successfully uploaded";
+          $msg = "Your file" . $fileName . " has been successfully uploaded";
           $query = "INSERT INTO fl_whistleblower_files(filepath,filename,form_id, created_at, updated_at) VALUES ('$fileTarget','$fileName','$idRecord', NOW(), NOW())";
           mysql_query($query, CONNECT);
         } else {
-          echo "Sorry !!! There was an error in uploading your file";
+          $msg = "Sorry !!! There was an error in uploading your file";
         }
       }
     } else if (isset($_FILES['file0']['name']) && isset($_FILES['file0']['tmp_name'])) {
-      $target = "upload/";
+      mkdir("upload/" . $idRecord . "/");
+      $target = "upload/" . $idRecord . "/";
       $fileName = $_FILES['file0']['name'];
       $fileTarget = $target . $fileName;
       $tempFileName = $_FILES['file0']['tmp_name'];
@@ -107,12 +109,12 @@ function insertForm()
       */
 
       if ($result) {
-        echo "result" . $result;
-        echo "Your file " . $fileName . " has been successfully uploaded";
+        // echo "result" . $result;
+        $msg = "Your file " . $fileName . " has been successfully uploaded";
         $query = "INSERT INTO fl_whistleblower_files(filepath,filename,form_id, created_at, updated_at) VALUES ('$fileTarget','$fileName','$idRecord', NOW(), NOW())";
         mysql_query($query, CONNECT);
       } else {
-        echo "Sorry !!! There was an error in uploading your file";
+        $msg = "Sorry !!! There was an error in uploading your file";
       }
     }
   }
@@ -120,10 +122,11 @@ function insertForm()
   /*
     * If file is already present in the destination folder
   */ else {
-    echo "File <html><b><i>" . $fileName . "</i></b></html> already exists in your folder. Please rename the file and try again.";
+    $msg = "File <html><b><i>" . $fileName . "</i></b></html> already exists in your folder. Please rename the file and try again.";
     mysqli_close(CONNECT);
   }
-  $arr = array('id' => $idRecord);
+  ob_end_clean();
+  $arr = array('id' => $idRecord, "msg" => $msg);
   echo json_encode($arr);
 }
 
@@ -145,7 +148,20 @@ function fetchForm($secretCode)
   $result = mysql_query($query, CONNECT);
   if ($result) {
     $arr = mysql_fetch_assoc($result);
-    echo json_encode($arr);
+    $formId = $arr['id'];
+    $files = glob("upload/" . $formId . "/*");
+    $arrFiles = [];
+    if (count($files) > 0) {
+      foreach ($files as $file) {
+        array_push($arrFiles, array("file" => basename($file), "path" => dirname($file)));
+      }
+    }
+    // } else {
+    //   array_push($arrFiles, array("file" => basename($files), "path" => dirname($files)));
+    // }
+    ob_end_clean();
+    $result = array("form" => $arr, "files" => $arrFiles);
+    echo json_encode($result);
   } else {
     echo "Error:" . mysql_error(CONNECT);
   };
