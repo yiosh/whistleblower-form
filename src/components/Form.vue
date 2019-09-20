@@ -555,14 +555,14 @@ export default {
           console.log("response", response.data);
 
           this.formId = response.data.id;
-          vm.sendMail();
+          vm.sendMail(response.data.id);
           return response.data.id;
         })
         .catch(error => {
           EventBus.$emit("snackbar", {
-            color: "success",
+            color: "error",
             state: true,
-            text: "this is a test"
+            text: "Errore di rete"
           });
           console.log(error);
         });
@@ -598,7 +598,7 @@ export default {
           });
         });
     },
-    sendMail() {
+    sendMail(id) {
       const vm = this;
 
       axios
@@ -607,12 +607,8 @@ export default {
           console.log("Mail response", response);
           let code = response.data.code;
           vm.code = code;
+          vm.insertCode(id, code);
           return true;
-        })
-        .then(() => {
-          // console.log("fcode", this.code);
-          vm.insertCode(vm.formId, vm.code);
-          // vm.$emit("mail-sent", vm.code);
         })
         .catch(error => {
           EventBus.$emit("snackbar", {
