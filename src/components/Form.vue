@@ -5,7 +5,8 @@
         <v-toolbar>
           <v-toolbar-title>Modello per la Segnalazione</v-toolbar-title>
         </v-toolbar>
-        <v-form enctype="multipart/form-data" @submit.prevent="formSubmit">
+        
+        <v-form enctype="multipart/form-data" @submit.prevent="onSubmit">
           <v-stepper v-model="e1" vertical>
             <v-stepper-step editable color="#3581b5" :complete="e1 > 1" step="1">Info</v-stepper-step>
 
@@ -323,9 +324,17 @@
                   </v-flex>
                 </v-layout>
               </v-container>
-              <v-card-actions>
-                <v-btn color="success" type="submit" dark>Invia</v-btn>
-                <v-btn @click="e1 = 2" flat>Indietro</v-btn>
+              <v-card-actions style="display: block">
+                <!-- <v-layout row class="mb-2">
+                  <v-checkbox
+                    v-model="acceptPrivacy"
+                    label="Allow spaces"></v-checkbox>
+                </v-layout> -->
+
+                <v-layout row>
+                  <v-btn color="success" type="submit" dark>Invia</v-btn>
+                  <v-btn @click="e1 = 2" flat>Indietro</v-btn>
+                </v-layout>
               </v-card-actions>
             </v-stepper-content>
           </v-stepper>
@@ -341,8 +350,7 @@
     {{ snackbar.text }}
       <v-btn
         flat
-        @click="snackbar = false"
-      >
+        @click="snackbar = false">
         Chiudi
       </v-btn>
     </v-snackbar>
@@ -353,13 +361,16 @@
 import EventBus from "@/eventBus.js";
 import axios from "axios";
 import lodash from "lodash";
+// import VueRecaptcha from 'vue-recaptcha';
 
 export default {
+  // components: { VueRecaptcha },
   data: () => ({
+    acceptPrivacy: false,
     checkbox: false,
     endpoint:
       location.hostname === "localhost"
-        ? "http://www.comune.bitetto.ba.it/whistleblower/"
+        ? "http://www.comune.bitetto.ba.it/whistleblower2/"
         : "",
     color: "success",
     snackbar: {
@@ -437,6 +448,16 @@ export default {
     }
   },
   methods: {
+    async onSubmit() {
+      // (optional) Wait until recaptcha has been loaded.
+      await this.$recaptchaLoaded();
+ 
+      // Execute reCAPTCHA with action "login".
+      const token = await this.$recaptcha('login');
+ 
+      // Do stuff with the received token.
+      this.onCaptchaVerified(token);
+    },
     validateInfo() {
       if (this.$refs.personalinfo.validate()) {
         this.e1 = 3;
@@ -490,8 +511,14 @@ export default {
     handleFileUpload(e) {
       this.file = e.target.files;
     },
-    formSubmit() {
+    
+    onCaptchaExpired: function () {
+      this.$refs.recaptcha.reset();
+    },
+    onCaptchaVerified(recaptchaToken) {
+      console.log(recaptchaToken)
       this.formData.append("insertForm", true);
+      this.formData.append("token", recaptchaToken);
       this.formData.append("nome", this.datiSegnalante.nome);
       this.formData.append("cognome", this.datiSegnalante.cognome);
       this.formData.append(
@@ -552,11 +579,18 @@ export default {
           }
         })
         .then(response => {
-          console.log("response", response.data);
-
-          this.formId = response.data.id;
-          vm.sendMail(response.data.id);
-          return response.data.id;
+          if (response.data.id) {
+            this.formId = response.data.id;
+            vm.sendMail(response.data.id);
+            return response.data.id;
+          } else {
+            EventBus.$emit("snackbar", {
+              color: "error",
+              state: true,
+              text: "Si è verificato un errore durante l'invio del modulo. Riprova"
+            });
+          }
+          console.log("response", response);
         })
         .catch(error => {
           EventBus.$emit("snackbar", {

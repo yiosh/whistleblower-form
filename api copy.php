@@ -46,18 +46,6 @@ if (isset($_POST['checkSession'])) {
 // Insert form on DB
 function insertForm()
 {
-  $token = $_POST['token'];
-  $secret = "6LeTIsgUAAAAAAxy-I6VTQW8cMQzEPlO5C6OVtSV";
-  $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . "&response=" . $token;
-  $response = file_get_contents($url);
-  $response = json_decode($response);
-
-  if ($response->success == false || $response->score < 0.5) {
-    # code...
-    echo json_encode($response);
-  }
-  // exit;
-
   $fileExistsFlag = 0;
   $nome = base64_encode($_POST['nome']);
   $cognome = base64_encode($_POST['cognome']);
