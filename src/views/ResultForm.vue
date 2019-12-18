@@ -52,7 +52,7 @@ export default {
       let vm = this;
       let endpoint =
         location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower/"
+          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
           : "";
 
       axios
@@ -71,7 +71,9 @@ export default {
                 nome: response.data.form.nome,
                 autoreFatto: response.data.form.autore_fatto,
                 cognome: response.data.form.cognome,
-                azioniValore: response.data.form.azioni_valore.split(", "),
+                azioniValore: decodeURI(response.data.form.azioni_valore).split(
+                  ","
+                ),
                 dataA: response.data.form.data_a,
                 dataDa: response.data.form.data_da,
                 descrizioneFatto: response.data.form.descrizione_fatto,
