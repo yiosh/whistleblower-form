@@ -1,20 +1,24 @@
 <template>
   <v-container>
-     <v-layout text-xs-center justify-center>
+    <v-layout text-xs-center justify-center>
       <v-flex xs12 md6>
         <v-card class="mb-4">
           <v-toolbar dark color="#3581b5">
-              <v-toolbar-title>Hai già effettuato una segnalazione?</v-toolbar-title>
-            </v-toolbar>
+            <v-toolbar-title
+              >Hai già effettuato una segnalazione?</v-toolbar-title
+            >
+          </v-toolbar>
           <v-card-text>
             <v-layout text-xs-center justify-center>
               <v-flex xs12 md6>
                 <v-text-field
-                prepend-icon="vpn_key"
-                label="Inserisci Codice"
-                v-model="searchSecretCode"
+                  prepend-icon="vpn_key"
+                  label="Inserisci Codice"
+                  v-model="searchSecretCode"
                 ></v-text-field>
-                <v-btn :loading="loading" @click="handleSearchForm">Invia</v-btn>
+                <v-btn :loading="loading" @click="handleSearchForm"
+                  >Invia</v-btn
+                >
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -22,6 +26,12 @@
         <v-card>
           <v-card-text>
             <v-layout text-xs-center justify-center wrap>
+              <v-flex xs12>
+                <p>
+                  Il segnalante deve rivestire il ruolo di dipendente pubblico o
+                  equiparato
+                </p>
+              </v-flex>
               <v-flex xs12>
                 <v-btn to="form">Nuova segnalazione</v-btn>
               </v-flex>
@@ -35,6 +45,7 @@
 
 <script>
 import EventBus from "@/eventBus.js";
+import { endpoint } from "@/plugins/endpoint";
 import axios from "axios";
 
 export default {
@@ -53,13 +64,9 @@ export default {
         formData.append("secretCode", this.searchSecretCode);
 
         let vm = this;
-        let endpoint =
-          location.hostname === "localhost"
-            ? "http://www.comune.bitetto.ba.it/whistleblower/"
-            : "";
 
         axios
-          .post(endpoint + "api.php", formData, {
+          .post(`${endpoint}/api.php`, formData, {
             headers: {
               "Content-Type": "multipart/form-data"
             }
@@ -93,5 +100,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

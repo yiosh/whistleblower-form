@@ -1,34 +1,22 @@
 <template>
   <v-app>
     <v-toolbar app dark color="#3581b5">
-      <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
       <v-toolbar-title class="headline text-uppercase">
-        <router-link to="/"><span>Città di Bitetto</span></router-link>
+        <router-link to="/">
+          <v-layout style="justify-content: center; align-items: center;">
+            <v-avatar
+              class="mr-2"
+              size="38"
+              color="grey lighten-4"
+            >
+              <img src="@/assets/logo.jpeg" alt="avatar">
+            </v-avatar>
+            <span>Città di Bitetto</span>
+          </v-layout>
+        </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <!-- <v-btn
-        class="hidden-sm-and-up"
-        color="warning"
-        dark
-        small
-        absolute
-        bottom
-        right
-        fab
-        @click="handleDialogToggle"
-      >
-        <v-icon>vpn_key</v-icon>
-      </v-btn> -->
-
       <v-toolbar-items>
-        <!-- <v-text-field
-          :loading="loading"
-          prepend-icon="vpn_key"
-          color="white"
-          :clearable="true"
-          label="Inserisci il tuo Codice"
-          v-model="searchSecretCode"
-        ></v-text-field> -->
         <v-dialog v-model="privacyDialog" width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark v-on="on">
@@ -90,7 +78,7 @@
                 <tr>
                   <th>Tipologia dati</th>
                   <th>Dettaglio dati</th>
-                  
+
                 </tr>
                 <tr>
                   <td>
@@ -181,7 +169,7 @@
               <p>Il Regolamento UE 679/2016 (artt. da 15 a 23) conferisce agli interessati l’esercizio di specifici diritti. In particolare, in relazione al trattamento dei Suoi dati personali, ha diritto di chiedere al Comune di Bitetto l’accesso, la rettifica, la cancellazione, la limitazione, l’opposizione e la portabilità; inoltre può proporre reclamo, nei confronti dell’Autorità di Controllo, che in Italia è il Garante per la Protezione dei Dati Personali.</p>
 
               <p>In qualsiasi momento, potrà chiedere di esercitare i Suoi diritti al Comune di Bitetto, che potrà contattare all’indirizzo mail whistleblowing@comune.bitetto.ba.it ovvero rivolgendosi al Data Protection Officer, che potrà contattare all’indirizzo mail: info@csipa.it</p>
-             
+
             </v-card-text>
 
             <v-divider></v-divider>
@@ -202,30 +190,6 @@
     </v-toolbar>
 
     <v-content>
-      <!-- <Landing/> -->
-      <!-- <v-container fluid>
-      
-          <v-layout v-if="!codeExist" wrap>
-            <v-flex xs12>
-              <Form @form-submit="handleFormSubmit" @mail-sent="handleMailSent" v-if="formSubmit === false"/>
-              <ThankYouPage :code="code" v-if="formSubmit === true"/>
-            </v-flex>
-            
-          </v-layout>
-      
-
-      <transition name="fade">
-        <v-layout v-if="codeExist" wrap>
-          <v-flex md8>
-            <UpdatedForm :updatedForm="updatedForm" @form-submit="handleFormSubmit" @mail-sent="handleMailSent" v-if="formSubmit === false"/>
-          </v-flex>
-          <v-flex md4>
-            <Header :header="header" v-if="formSubmit === false"/>
-            <Comments :formId="updatedForm.id" @form-submit="handleFormSubmit" @mail-sent="handleMailSent" v-if="formSubmit === false"/>
-          </v-flex>
-        </v-layout>
-      </transition>
-        </v-container> -->
       <router-view />
     </v-content>
     <v-snackbar
@@ -251,6 +215,7 @@
 // import Comments from "./components/Comments";
 import Modal from "@/components/Modal";
 import EventBus from "@/eventBus.js";
+import { endpoint } from "@/plugins/endpoint";
 import axios from "axios";
 
 export default {
@@ -258,13 +223,6 @@ export default {
   components: {
     Modal
   },
-  // components: {
-  //   Form,
-  //   UpdatedForm,
-  //   ThankYouPage,
-  //   Header,
-  //   Comments
-  // },
   data() {
     return {
       privacyDialog: false,
@@ -285,11 +243,7 @@ export default {
         mode: "",
         timeout: 6000,
         text: "Il modulo è stato inviato con successo."
-      },
-      endpoint:
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
-          : ""
+      }
     };
   },
   computed: {
@@ -324,11 +278,14 @@ export default {
       formData.append("checkSession", true);
 
       try {
-        const response = await axios.post(this.endpoint + "api.php", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
+        const response = await axios.post(`${endpoint}/api.php`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
           }
-        });
+        );
         console.log("response-check-session", response);
         if (response.data.status === "OK") {
           this.$router.push({
@@ -346,8 +303,7 @@ export default {
         });
         console.log(error);
       }
-    },
-    async handleCheckSession() {}
+    }
   },
   mounted() {
     EventBus.$on("snackbar", payload => {

@@ -112,12 +112,16 @@
                       <v-dialog v-model="privacyDialog" width="500">
                         <template v-slot:activator="{ on }">
                           <v-checkbox
-                            v-on="on"
+                            class="d-inline-block mt-0"
                             v-model="checkbox"
                             :rules="[v => !!v || 'Devi accettare di continuare!']"
-                            label="Autorizzo il trattamento dei miei dati ai fini della gestione di questa segnalazione."
                             required
-                          ></v-checkbox>
+                          >
+                            <template slot="label">
+                              <span>Autorizzo il <a v-on="on">trattamento dei miei dati</a> ai fini della gestione di questa segnalazione.</span>
+                            </template>
+                          </v-checkbox>
+                          
                         </template>
 
                         <v-card>
@@ -525,6 +529,8 @@ import EventBus from "@/eventBus.js";
 import axios from "axios";
 import lodash from "lodash";
 import VueRecaptcha from 'vue-recaptcha';
+import { endpoint } from "@/plugins/endpoint";
+
 
 export default {
   components: { VueRecaptcha },
@@ -532,10 +538,6 @@ export default {
     privacyDialog: false,
     acceptPrivacy: false,
     checkbox: false,
-    endpoint:
-      location.hostname === "localhost"
-        ? "http://www.comune.bitetto.ba.it/whistleblower2/"
-        : "",
     color: "success",
     snackbar: {
       color: "success",
@@ -737,7 +739,7 @@ export default {
       const vm = this;
 
       axios
-        .post(this.endpoint + "api.php", this.formData, {
+        .post(`${endpoint}/api.php`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -773,7 +775,7 @@ export default {
       this.formData.append("secretCode", secretCode);
 
       axios
-        .post(this.endpoint + "api.php", vm.formData, {
+        .post(`${endpoint}/api.php`, vm.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -800,7 +802,7 @@ export default {
       const vm = this;
 
       axios
-        .post(this.endpoint + "mailer.php")
+        .post(`${endpoint}/mailer.php`)
         .then(response => {
           console.log("Mail response", response);
           let code = response.data.code;

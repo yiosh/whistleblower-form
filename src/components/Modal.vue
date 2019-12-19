@@ -13,15 +13,24 @@
                   <v-text-field label="Legal first name*" required></v-text-field>
                 </v-flex> -->
                 <v-flex xs12>
-                  <v-text-field type="password" label="Password" hint="Inserisci la password per continuare" v-model="password"></v-text-field>
+                  <v-text-field
+                    type="password"
+                    label="Password"
+                    hint="Inserisci la password per continuare"
+                    v-model="password"
+                  ></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="handleSubmit">Login</v-btn>
-            <v-btn color="blue darken-1" flat @click="dialog = false">Chiudi</v-btn>
+            <v-btn color="blue darken-1" flat @click="handleSubmit"
+              >Login</v-btn
+            >
+            <v-btn color="blue darken-1" flat @click="dialog = false"
+              >Chiudi</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-form>
@@ -32,6 +41,8 @@
 <script>
 import EventBus from "@/eventBus.js";
 import axios from "axios";
+import { endpoint } from "@/plugins/endpoint";
+
 
 export default {
   data() {
@@ -46,15 +57,9 @@ export default {
       formData.append("checkPassword", true);
       formData.append("password", this.password);
 
-      // let vm = this;
-      let endpoint =
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
-          : "";
-
       if (this.password.length > 0) {
         axios
-          .post(endpoint + "api.php", formData, {
+          .post(`${endpoint}/api.php`, formData, {
             headers: {
               "Content-Type": "multipart/form-data"
             }

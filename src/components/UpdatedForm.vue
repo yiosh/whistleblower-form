@@ -331,6 +331,8 @@
 <script>
 import axios from "axios";
 import lodash from "lodash";
+import { endpoint } from "@/plugins/endpoint";
+
 
 export default {
   props: ["updatedForm"],
@@ -505,7 +507,7 @@ export default {
       const vm = this;
 
       axios
-        .post("api.php", this.formData, {
+        .post(`${endpoint}/api.php`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -531,7 +533,7 @@ export default {
       this.formData.append("secretCode", secretCode);
 
       axios
-        .post("api.php", vm.formData, {
+        .post(`${endpoint}/api.php`, vm.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -544,7 +546,7 @@ export default {
       const vm = this;
 
       axios
-        .post("mailer.php")
+        .post(`${endpoint}/mailer.php`)
         .then(response => {
           console.log("Mail response", response.data.code);
           let code = response.data.code;

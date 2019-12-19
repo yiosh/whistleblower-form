@@ -26,6 +26,7 @@ import Header from "@/components/Header";
 import Comments from "@/components/Comments";
 import EventBus from "@/eventBus.js";
 import axios from "axios";
+import { endpoint } from "@/plugins/endpoint";
 
 export default {
   components: {
@@ -50,13 +51,9 @@ export default {
       formData.append("secretCode", secretCode);
 
       let vm = this;
-      let endpoint =
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
-          : "";
 
       axios
-        .post(endpoint + "api.php", formData, {
+        .post(`${endpoint}/api.php`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }

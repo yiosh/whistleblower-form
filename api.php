@@ -234,7 +234,7 @@ function insertComment($formId, $text)
 function checkPassword($password)
 {
   ob_end_clean();
-  $password_set = "password";
+  $password_set = "19aeuSegBi20!@";
   if ($password === $password_set) {
     if (!isset($_SESSION)) {
       session_start();

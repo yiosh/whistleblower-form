@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: X-Requested-With");
 /* CUSTOMER DATA */
 define("sitename", "Condivision Cloud");
 define("client", "DEMO");
-define('LOGO_MAIL', 'http://www.comune.bitetto.ba.it/set/lay/logo.png');
+define('LOGO_MAIL', 'https://www.comune.bitetto.ba.it/set/lay/logo.png');
 
 
 /*ROOT*/

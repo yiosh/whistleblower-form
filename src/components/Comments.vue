@@ -14,22 +14,20 @@
               solo
               counter
             ></v-textarea>
-            <v-btn color="success" :loading="buttonLoading" @click="handleSendComment">
+            <v-btn
+              color="success"
+              :loading="buttonLoading"
+              @click="handleSendComment"
+            >
               Invia
             </v-btn>
           </v-card-text>
 
           <v-list three-line>
             <template v-for="(item, index) in items">
-              <v-divider
-                v-if="index < items.length"
-                :key="index"
-              ></v-divider>
+              <v-divider v-if="index < items.length" :key="index"></v-divider>
 
-              <v-list-tile
-                
-                :key="item.title"
-              >
+              <v-list-tile :key="item.title">
                 <v-list-tile-content>
                   <v-list-tile-title>{{ item.title }}</v-list-tile-title>
                   <v-list-tile-sub-title>
@@ -48,6 +46,7 @@
 <script>
 import EventBus from "@/eventBus.js";
 import axios from "axios";
+import { endpoint } from "@/plugins/endpoint";
 
 export default {
   props: ["formId"],
@@ -73,13 +72,8 @@ export default {
       this.formData.append("fetchComments", true);
       this.formData.append("formId", this.formId);
 
-      let endpoint =
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower/"
-          : "";
-
       axios
-        .post(endpoint + "api.php", this.formData, {
+        .post(`${endpoint}/api.php`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -109,13 +103,8 @@ export default {
       this.formData.append("formId", this.formId);
       this.formData.append("text", this.comment);
 
-      let endpoint =
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower/"
-          : "";
-
       axios
-        .post(endpoint + "api.php", this.formData, {
+        .post(`${endpoint}/api.php`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -154,5 +143,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

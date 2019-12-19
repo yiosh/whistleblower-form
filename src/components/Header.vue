@@ -7,10 +7,8 @@
         </v-toolbar>
         <v-card>
           <v-list two-line>
-            <template v-for="(item, index) in items">            
-              <v-list-tile
-                :key="item.title"
-              >
+            <template v-for="(item, index) in items">
+              <v-list-tile :key="item.title">
                 <v-list-tile-action>
                   <v-icon>{{ item.icon }}</v-icon>
                 </v-list-tile-action>
@@ -64,5 +62,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -8,7 +8,7 @@
         indeterminate
       ></v-progress-circular>
     </v-layout>
-     <v-layout v-if="!loading" text-xs-center justify-center>
+    <v-layout v-if="!loading" text-xs-center justify-center>
       <v-flex xs12 md6>
         <v-text-field
           prepend-icon="search"
@@ -16,26 +16,29 @@
           v-model="search"
           class="py-3 px-1"
         ></v-text-field>
-        
+
         <v-card v-for="item in filterItems" :key="item.id" class="mb-3">
-           <v-toolbar dark color="#3581b5">
-              <v-toolbar-title>Segnalazione ID#{{ item.id }}</v-toolbar-title>
-            </v-toolbar>
-          
+          <v-toolbar dark color="#3581b5">
+            <v-toolbar-title>Segnalazione ID#{{ item.id }}</v-toolbar-title>
+          </v-toolbar>
+
           <v-card-actions>
             <small>{{ item.created_at }}</small>
             <v-layout justify-end>
-            <v-btn @click="handleRedirect(item.secret_code)" flat>Vedi Segnalazione</v-btn>
+              <v-btn @click="handleRedirect(item.secret_code)" flat
+                >Vedi Segnalazione</v-btn
+              >
             </v-layout>
           </v-card-actions>
         </v-card>
       </v-flex>
-    </v-layout>        
+    </v-layout>
   </v-container>
 </template>
 
 <script>
 import EventBus from "@/eventBus.js";
+import { endpoint } from "@/plugins/endpoint";
 import axios from "axios";
 
 export default {
@@ -43,11 +46,7 @@ export default {
     return {
       loading: true,
       search: "",
-      items: [],
-      endpoint:
-        location.hostname === "localhost"
-          ? "http://www.comune.bitetto.ba.it/whistleblower2/"
-          : ""
+      items: []
     };
   },
   computed: {
@@ -73,7 +72,7 @@ export default {
       formData.append("checkSession", true);
 
       try {
-        const response = await axios.post(this.endpoint + "api.php", formData, {
+        const response = await axios.post(`${endpoint}/api.php`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -98,7 +97,7 @@ export default {
       formData.append("fetchAllForms", true);
 
       axios
-        .post(this.endpoint + "api.php", formData, {
+        .post(`${endpoint}/api.php`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -121,19 +120,8 @@ export default {
   },
   created() {
     this.handleCheckSession();
-    // if (=== "OK") {
-    //   this.handleFetchForms();
-    // } else {
-
-    // }
-
-    // if (this.$route.params.loggedIn) {
-    // } else {
-    //
-    // }
   }
 };
 </script>
 
-<style>
-</style>
+<style></style>
