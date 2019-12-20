@@ -18,12 +18,12 @@ define('DOCUMENT_ROOT', realpath($_SERVER["DOCUMENT_ROOT"]));
 // echo DOCUMENT_ROOT;
 
 /*AUTH DATA*/
-define("mail_host", "smtp.gmail.com:");
+define("mail_host", "mail.aryma.it");
 define('SMTPSecure', 'ssl');
 define('Port', '465');
 define("mail_name", client);
-define("mail_user", "info@aryma.eu");
-define("mail_password", "lappusena123");
+define("mail_user", " webmaster@comune.bitetto.ba.it");
+define("mail_password", "dsq432%g!d3");
 
 
 /*REPLY AND SUPPORT */
@@ -35,9 +35,9 @@ define("mail_copy", "info@aryma.it");
 $whistCode = base64_encode(time());
 $whistCode = str_replace("==", "", $whistCode);
 
-$emailto = 'supporto@aryma.it';
+$emailto = 'vitomichele.fazio@gmail.com';
 $subjet = 'Segnalazione Whistleblower #' . $whistCode;
-$messaggio = '<h2>Hai Ricevuto una nuova segnalazione, per consultarla inserisci il codice: </h2>' . $whistCode;
+$messaggio = '<p>Hai Ricevuto una nuova segnalazione, per consultarla inserisci il codice:</p> <h2>' . $whistCode . '</h2>';
 
 $attachment = '';
 $attachmentname = '';
@@ -89,7 +89,7 @@ function smail($destinatario, $soggetto, $messaggio, $from = '', $nameFrom = '',
     echo "Didn't work";
     return $mail->ErrorInfo;
   } else {
-    //if(defined('mail_send_log')) mail_save($from,$destinatario,$ccList,$bccList,$soggetto,$messaggio,1,'INVIATA',$workflow_id,$record_id);
+    if (defined('mail_send_log')) mail_save($from, $destinatario, $ccList, $bccList, $soggetto, $messaggio, 1, 'INVIATA', $workflow_id, $record_id);
     return true;
   }
 
@@ -202,8 +202,23 @@ $mail_txt = str_replace("[*CORPO*]", $messaggio, $mail_template); //we insert co
 
 $esito = smail($emailto, $subjet, $mail_txt, '', '', $attachment, $attachmentname, 1);
 
+if ($_POST['email']) {
+  $emailto = $_POST['email'];
+  $messaggio = '<p>Hai enviato una nuova segnalazione, per consultarla inserisci il codice:</p> <h2>' . $whistCode . '</h2>';
+  $mail_txt = str_replace("[*CORPO*]", $messaggio, $mail_template);
+  $esito = smail($emailto, $subjet, $mail_txt, '', '', $attachment, $attachmentname, 1);
+}
+
 if (!defined('mail_template')) define("mail_template", $mail_template);
 unset($mail_template);
 
-$callback  = array('code' => $whistCode);
-echo json_encode($callback);
+if ($esito && $_POST['email']) {
+  $callback  = array('code' => $whistCode, 'success' => $esito, 'double' => true);
+  echo json_encode($callback);
+} elseif ($esito) {
+  $callback  = array('code' => $whistCode, 'success' => $esito);
+  echo json_encode($callback);
+} else {
+  $callback  = array('success' => $esito);
+  echo json_encode($callback);
+}

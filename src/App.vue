@@ -2,7 +2,7 @@
   <v-app>
     <v-toolbar app dark color="#3581b5">
       <v-toolbar-title class="headline text-uppercase">
-        <router-link to="/">
+        <a href="https://www.comune.bitetto.ba.it">
           <v-layout style="justify-content: center; align-items: center;">
             <v-avatar
               class="mr-2"
@@ -13,7 +13,7 @@
             </v-avatar>
             <span>Città di Bitetto</span>
           </v-layout>
-        </router-link>
+        </a>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
@@ -208,11 +208,6 @@
 </template>
 
 <script>
-// import Form from "./components/Form";
-// import UpdatedForm from "./components/UpdatedForm";
-// import ThankYouPage from "./components/ThankYouPage";
-// import Header from "./components/Header";
-// import Comments from "./components/Comments";
 import Modal from "@/components/Modal";
 import EventBus from "@/eventBus.js";
 import { endpoint } from "@/plugins/endpoint";

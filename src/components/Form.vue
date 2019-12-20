@@ -564,7 +564,7 @@ export default {
       qualifica: "",
       sedeServizio: "",
       telefono: "",
-      email: "",
+      email: null,
       valid: ""
     },
     datiSegnalazione: {
@@ -800,10 +800,26 @@ export default {
     },
     sendMail(id) {
       const vm = this;
+      const formData = new FormData();
+      if (this.datiSegnalante.email) {
+        formData.set('email', this.datiSegnalante.email)
+      }
 
       axios
-        .post(`${endpoint}/mailer.php`)
+        .post(`${endpoint}/mailer.php`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
         .then(response => {
+          if (response.data.success === false) {
+            EventBus.$emit("snackbar", {
+              color: "error",
+              state: true,
+              text: "Si è verificato un errore, riprova"
+            });
+            return;
+          }
           console.log("Mail response", response);
           let code = response.data.code;
           vm.code = code;
