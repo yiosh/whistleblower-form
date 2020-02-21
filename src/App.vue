@@ -1,16 +1,16 @@
 <template>
   <v-app>
-    <v-toolbar app dark color="#3581b5">
+    <v-toolbar id="main-toolbar" height="100%" app dark color="#3581b5">
       <v-toolbar-title class="headline text-uppercase">
         <a href="https://www.comune.bitetto.ba.it">
           <v-layout style="justify-content: center; align-items: center;">
-            <v-avatar
+              <img src="@/assets/logo.png" alt="avatar" class="mr-2">
+            <!-- <v-avatar
               class="mr-2"
               size="38"
               color="grey lighten-4"
             >
-              <img src="@/assets/logo.jpeg" alt="avatar">
-            </v-avatar>
+            </v-avatar> -->
             <span>Città di Bitetto</span>
           </v-layout>
         </a>
@@ -273,14 +273,11 @@ export default {
       formData.append("checkSession", true);
 
       try {
-        const response = await axios.post(`${endpoint}/api.php`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
+        const response = await axios.post(`${endpoint}/api.php`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
           }
-        );
+        });
         console.log("response-check-session", response);
         if (response.data.status === "OK") {
           this.$router.push({
@@ -332,5 +329,9 @@ th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
+}
+
+#main-toolbar .v-toolbar__content {
+  height: 100% !important;
 }
 </style>
