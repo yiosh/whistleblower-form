@@ -305,7 +305,7 @@
                       >
                         <a
                           style="text-decoration: none;"
-                          :href="file.path + '/' +  file.file" 
+                          :href="'/whistleblower/' + file.path + '/' +  file.file" 
                           download 
                         >
                           <v-icon>save_alt</v-icon>
@@ -332,7 +332,6 @@
 import axios from "axios";
 import lodash from "lodash";
 import { endpoint } from "@/plugins/endpoint";
-
 
 export default {
   props: ["updatedForm"],
