@@ -46,6 +46,18 @@ if (isset($_POST['checkSession'])) {
 // Insert form on DB
 function insertForm()
 {
+  $token = $_POST['token'];
+  $secret = "6LfDWcgUAAAAAIuCKuaLUZnl5ITn1IWoIZBoPE6n";
+  $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . "&response=" . $token;
+  $response = file_get_contents($url);
+  $response = json_decode($response);
+
+  if ($response->success == false) {
+    # code...
+    echo json_encode($response);
+  }
+  // exit;
+
   $fileExistsFlag = 0;
   $nome = base64_encode($_POST['nome']);
   $cognome = base64_encode($_POST['cognome']);
@@ -56,7 +68,7 @@ function insertForm()
   $dataDa = $_POST['dataDa'];
   $dataA = $_POST['dataA'];
   $luogoFatto = $_POST['luogoFatto'];
-  $azioniValore = $_POST['azioniValore'];
+  $azioniValore = base64_encode($_POST['azioniValore']);
   $descrizioneFatto = $_POST['descrizioneFatto'];
   $autoreFatto = $_POST['autoreFatto'];
   $eventualiSoggetti = $_POST['eventualiSoggetti'];
@@ -126,7 +138,7 @@ function insertForm()
     mysqli_close(CONNECT);
   }
   ob_end_clean();
-  $arr = array('id' => $idRecord, "msg" => $msg);
+  $arr = array('id' => $idRecord, "msg" => $msg, "recaptcha" => json_encode($response));
   echo json_encode($arr);
 }
 
@@ -148,6 +160,7 @@ function fetchForm($secretCode)
   $result = mysql_query($query, CONNECT);
   if ($result) {
     $arr = mysql_fetch_assoc($result);
+    $arr['azioni_valore'] = base64_decode($arr['azioni_valore']);
     $formId = $arr['id'];
     $files = glob("upload/" . $formId . "/*");
     $arrFiles = [];
@@ -169,7 +182,7 @@ function fetchForm($secretCode)
 
 function fetchAllForms()
 {
-  $query = "SELECT * FROM `fl_whistleblower`";
+  $query = "SELECT * FROM `fl_whistleblower` ORDER BY id DESC";
   $result = mysql_query($query, CONNECT);
   if ($result->num_rows > 0) {
     $arr = [];
@@ -177,8 +190,11 @@ function fetchAllForms()
       $r = $row;
       array_push($arr, $r);
     };
+    $arr['azioni_valore'] = base64_decode($arr['azioni_valore']);
+    ob_end_clean();
     echo json_encode($arr);
   } else {
+    ob_end_clean();
     echo "Error:" . mysql_error(CONNECT);
   };
 }
@@ -218,7 +234,7 @@ function insertComment($formId, $text)
 function checkPassword($password)
 {
   ob_end_clean();
-  $password_set = "password";
+  $password_set = "19aeuSegBi20!@";
   if ($password === $password_set) {
     if (!isset($_SESSION)) {
       session_start();
