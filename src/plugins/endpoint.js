@@ -1,1 +1,1 @@
-export const endpoint = "http://www.comune.bitetto.ba.it/whistleblower";
+export const endpoint = location.origin + "/app/whistleblower";

@@ -3,24 +3,20 @@
     <v-layout text-xs-center justify-center>
       <v-flex xs12 md6>
         <v-card class="mb-4">
-          <v-toolbar dark color="#3581b5">
+          <v-toolbar dark color="primary">
             <v-toolbar-title
               >Hai già effettuato una segnalazione?</v-toolbar-title
             >
           </v-toolbar>
-          <v-card-text>
-            <v-layout text-xs-center justify-center>
-              <v-flex xs12 md6>
-                <v-text-field
-                  prepend-icon="vpn_key"
-                  label="Inserisci Codice"
-                  v-model="searchSecretCode"
-                ></v-text-field>
-                <v-btn :loading="loading" @click="handleSearchForm"
-                  >Invia</v-btn
-                >
-              </v-flex>
-            </v-layout>
+          <v-card-text class="d-flex justify-center">
+            <div class="d-flex flex-column justify-center">
+              <v-text-field
+                prepend-icon="vpn_key"
+                label="Inserisci Codice"
+                v-model="searchSecretCode"
+              ></v-text-field>
+              <v-btn :loading="loading" @click="handleSearchForm">Invia</v-btn>
+            </div>
           </v-card-text>
         </v-card>
         <v-card>
@@ -32,7 +28,7 @@
                   equiparato
                 </p>
               </v-flex>
-              <v-flex xs12>
+              <v-flex xs12 class="d-flex justify-center">
                 <v-btn to="form">Nuova segnalazione</v-btn>
               </v-flex>
             </v-layout>
@@ -52,7 +48,7 @@ export default {
   data() {
     return {
       searchSecretCode: "",
-      loading: false
+      loading: false,
     };
   },
   methods: {
@@ -68,10 +64,10 @@ export default {
         axios
           .post(`${endpoint}/api.php`, formData, {
             headers: {
-              "Content-Type": "multipart/form-data"
-            }
+              "Content-Type": "multipart/form-data",
+            },
           })
-          .then(response => {
+          .then((response) => {
             console.log("response", response);
             if (response.data !== null) {
               vm.$router.push({ path: `/form/${this.searchSecretCode}` });
@@ -79,15 +75,15 @@ export default {
               EventBus.$emit("snackbar", {
                 color: "error",
                 state: true,
-                text: "Modulo non trovato!"
+                text: "Modulo non trovato!",
               });
             }
           })
-          .catch(error => {
+          .catch((error) => {
             EventBus.$emit("snackbar", {
               color: "error",
               state: true,
-              text: "Errore di rete!"
+              text: "Errore di rete!",
             });
             console.log(error);
           })
@@ -95,8 +91,8 @@ export default {
             this.loading = false;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

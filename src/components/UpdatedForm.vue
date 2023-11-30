@@ -1,28 +1,50 @@
 <template>
   <v-container>
-    <v-layout  wrap>
+    <v-layout wrap>
       <v-flex xs12>
         <v-toolbar>
           <v-toolbar-title>Modello per la Segnalazione</v-toolbar-title>
         </v-toolbar>
         <v-form enctype="multipart/form-data" @submit.prevent="formSubmit">
           <v-stepper v-model="e1" vertical>
-            <v-stepper-step editable color="#3581b5" :complete="e1 > 1" step="1">Info</v-stepper-step>
+            <v-stepper-step editable color="#3581b5" :complete="e1 > 1" step="1"
+              >Info</v-stepper-step
+            >
 
             <v-stepper-content step="1">
               <v-card class="mb-3" flat>
                 <v-card-text style="text-align: left;">
-                  Contrastare la corruzione e l'uso improprio del potere pubblico è un dovere civico al quale ognuno può concorrere.
-                  Proprio per questo, il legislatore ha previsto forme specifiche di tutela per il segnalante, non contemplando la possibilità dell'invio di segnalazioni in forma anonima.
-                  <br>
-                  <br>
-                  In ragione di ciò, la forma assolutamente privilegiata di segnalazioni - cui sarà assicurata una trattazione con carattere di priorità - è la segnalazione c.d. confidenziale ossia quella nella quale il segnalante rileva le sue generalità che comunque saranno trattate con le garanzie previste dalla legge (riservatezza, divieto di accesso, tutela a fronte di atti discriminatori eventualmente subiti…).
-                  <br>
-                  <br>
-                  Le segnalazioni effettuate, invece, in forma anonima (ossia senza indicare le proprie generalità) saranno prese in considerazione solo in casi peculiari e, comunque, non saranno trattate ai sensi dell'art. 54-bis del D.lgs. 165/2001 e s.m.i. Tuttavia, le segnalazioni, anche se inviate in forma anonima in prima istanza, potranno essere successivamente integrate con le generalità del segnalante ai fini di acquisire ogni forma di tutela legale, oltre alla priorità di gestione.
-                  <br>
-                  <br>
-                  Tutte le segnalazioni, nel rispetto della tutela della riservatezza dell'identità del segnalante, potranno essere inviate ad altre istituzioni (autorità giudiziaria, dipartimento della funzione pubblica, corte dei conti, etc.).
+                  Contrastare la corruzione e l'uso improprio del potere
+                  pubblico è un dovere civico al quale ognuno può concorrere.
+                  Proprio per questo, il legislatore ha previsto forme
+                  specifiche di tutela per il segnalante, non contemplando la
+                  possibilità dell'invio di segnalazioni in forma anonima.
+                  <br />
+                  <br />
+                  In ragione di ciò, la forma assolutamente privilegiata di
+                  segnalazioni - cui sarà assicurata una trattazione con
+                  carattere di priorità - è la segnalazione c.d. confidenziale
+                  ossia quella nella quale il segnalante rileva le sue
+                  generalità che comunque saranno trattate con le garanzie
+                  previste dalla legge (riservatezza, divieto di accesso, tutela
+                  a fronte di atti discriminatori eventualmente subiti…).
+                  <br />
+                  <br />
+                  Le segnalazioni effettuate, invece, in forma anonima (ossia
+                  senza indicare le proprie generalità) saranno prese in
+                  considerazione solo in casi peculiari e, comunque, non saranno
+                  trattate ai sensi dell'art. 54-bis del D.lgs. 165/2001 e
+                  s.m.i. Tuttavia, le segnalazioni, anche se inviate in forma
+                  anonima in prima istanza, potranno essere successivamente
+                  integrate con le generalità del segnalante ai fini di
+                  acquisire ogni forma di tutela legale, oltre alla priorità di
+                  gestione.
+                  <br />
+                  <br />
+                  Tutte le segnalazioni, nel rispetto della tutela della
+                  riservatezza dell'identità del segnalante, potranno essere
+                  inviate ad altre istituzioni (autorità giudiziaria,
+                  dipartimento della funzione pubblica, corte dei conti, etc.).
                 </v-card-text>
                 <v-card-actions>
                   <v-btn color="#3581b5" dark @click="e1 = 2">Continua</v-btn>
@@ -30,7 +52,8 @@
               </v-card>
             </v-stepper-content>
 
-            <v-stepper-step color="#3581b5" editable :complete="e1 > 2" step="2">Dati Segnalante
+            <v-stepper-step color="#3581b5" editable :complete="e1 > 2" step="2"
+              >Dati Segnalante
               <!-- <small>Summarize if needed</small> -->
             </v-stepper-step>
 
@@ -39,7 +62,11 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-switch
-                      :label="`Anonimo? ${datiSegnalante.anonimo === false ? 'No' : 'Sì'}`"
+                      :label="
+                        `Anonimo? ${
+                          datiSegnalante.anonimo === false ? 'No' : 'Sì'
+                        }`
+                      "
                       v-model="datiSegnalante.anonimo"
                     ></v-switch>
                   </v-flex>
@@ -71,10 +98,23 @@
                       </v-flex>
                       <v-flex xs1>
                         <v-tooltip bottom>
-                          <span slot="activator">
-                            <v-icon style="cursor: pointer">help_outline</v-icon>
-                          </span>
-                          <span>Qualora il segnalante rivesta la qualifica di pubblico ufficiale, l'invio della presente segnalazione non lo esonera dall'obbligo di denunciare alla competente Autorità giudiziaria i fatti penalmente rilevante e le ipotesi di danno erariale</span>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
+                              style="cursor: pointer"
+                              >help_outline</v-icon
+                            >
+                          </template>
+
+                          <span
+                            >Qualora il segnalante rivesta la qualifica di
+                            pubblico ufficiale, l'invio della presente
+                            segnalazione non lo esonera dall'obbligo di
+                            denunciare alla competente Autorità giudiziaria i
+                            fatti penalmente rilevante e le ipotesi di danno
+                            erariale</span
+                          >
                         </v-tooltip>
                       </v-flex>
                     </v-layout>
@@ -89,11 +129,19 @@
                   </v-flex>
 
                   <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.telefono" label="Telefono" disabled></v-text-field>
+                    <v-text-field
+                      v-model="datiSegnalante.telefono"
+                      label="Telefono"
+                      disabled
+                    ></v-text-field>
                   </v-flex>
 
                   <v-flex v-if="datiSegnalante.anonimo === false" xs12 md6>
-                    <v-text-field v-model="datiSegnalante.email" label="Email" disabled></v-text-field>
+                    <v-text-field
+                      v-model="datiSegnalante.email"
+                      label="Email"
+                      disabled
+                    ></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -105,7 +153,9 @@
               </v-card-actions>
             </v-stepper-content>
 
-            <v-stepper-step color="#3581b5" editable :complete="e1 > 3" step="3">Dati Segnalazione</v-stepper-step>
+            <v-stepper-step color="#3581b5" editable :complete="e1 > 3" step="3"
+              >Dati Segnalazione</v-stepper-step
+            >
 
             <v-stepper-content step="3">
               <!-- <v-form v-model="datiSegnalante.valid"> -->
@@ -113,7 +163,9 @@
                 <v-layout row wrap>
                   <v-flex xs12 style="text-align: left">
                     <label>
-                      <strong>Data/Periodo in cui si è verificato il fatto:</strong>
+                      <strong
+                        >Data/Periodo in cui si è verificato il fatto:</strong
+                      >
                     </label>
                   </v-flex>
                   <v-flex xs12 md6>
@@ -121,57 +173,63 @@
                       :close-on-content-click="false"
                       v-model="datiSegnalazione.menu1"
                       :nudge-right="40"
-                      lazy
                       transition="scale-transition"
                       offset-y
                       full-width
                       min-width="290px"
                     >
-                      <v-text-field
-                        slot="activator"
-                        v-model="dateDaFormatted"
-                        label="Da"
-                        append-icon="event"
-                        disabled
-                      ></v-text-field>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          slot="activator"
+                          v-model="dateDaFormatted"
+                          label="Da"
+                          append-icon="event"
+                          disabled
+                        ></v-text-field>
+                      </template>
                       <v-date-picker
                         locale="it-it"
                         v-model="datiSegnalazione.dateDa"
                       ></v-date-picker>
-                        <!-- @input="dateChanged" -->
+                      <!-- @input="dateChanged" -->
                     </v-menu>
                   </v-flex>
                   <v-flex xs12 md6>
                     <v-menu
                       :close-on-content-click="false"
                       v-model="datiSegnalazione.menu2"
-                      lazy
                       transition="scale-transition"
                       offset-y
                       full-width
                       min-width="290px"
                     >
-                      <v-text-field
-                        slot="activator"
-                        v-model="dateAFormatted"
-                        label="A"
-                        append-icon="event"
-                        disabled
-                      ></v-text-field>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          slot="activator"
+                          v-model="dateAFormatted"
+                          label="A"
+                          append-icon="event"
+                          disabled
+                        ></v-text-field>
+                      </template>
                       <v-date-picker
                         locale="it-it"
                         v-model="datiSegnalazione.dateA"
                       ></v-date-picker>
-                        <!-- @input="datiSegnalazione.menu2 = false" -->
+                      <!-- @input="datiSegnalazione.menu2 = false" -->
                     </v-menu>
                   </v-flex>
                   <v-flex xs12 style="text-align: left">
                     <label>
-                      <strong>Luogo fisico in cui si è verificato il fatto:</strong>
+                      <strong
+                        >Luogo fisico in cui si è verificato il fatto:</strong
+                      >
                     </label>
                   </v-flex>
                   <v-flex xs12 md4>
-                    <v-radio-group v-model="datiSegnalazione.luogoFatto.selected">
+                    <v-radio-group
+                      v-model="datiSegnalazione.luogoFatto.selected"
+                    >
                       <v-radio
                         v-for="option in datiSegnalazione.luogoFatto.options"
                         :key="option.name"
@@ -192,14 +250,27 @@
                   </v-flex>
                   <v-flex xs12 style="text-align: left">
                     <label>
-                      <strong>Ritengo che le azioni od omissioni commesse o tentate siano:</strong>
+                      <strong
+                        >Ritengo che le azioni od omissioni commesse o tentate
+                        siano:</strong
+                      >
                     </label>
 
                     <v-tooltip bottom>
-                      <span slot="activator">
-                        <v-icon style="cursor: pointer">help_outline</v-icon>
-                      </span>
-                      <span>La segnalazione non riguarda rimostranze di carattere personale del segnalante o richieste che attengono alla disciplina del rapporto di lavoro o ai rapporti col superiore gerarchico o colleghi, per le quali ocorre fare riferimento al servizio competente per il personale e al Comitato Unico di Garanzia</span>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon v-bind="attrs" v-on="on" style="cursor: pointer"
+                          >help_outline</v-icon
+                        >
+                      </template>
+
+                      <span
+                        >La segnalazione non riguarda rimostranze di carattere
+                        personale del segnalante o richieste che attengono alla
+                        disciplina del rapporto di lavoro o ai rapporti col
+                        superiore gerarchico o colleghi, per le quali ocorre
+                        fare riferimento al servizio competente per il personale
+                        e al Comitato Unico di Garanzia</span
+                      >
                     </v-tooltip>
 
                     <v-checkbox
@@ -253,10 +324,20 @@
                         </v-flex>
                         <v-flex xs1>
                           <v-tooltip bottom>
-                            <span slot="activator">
-                              <v-icon style="cursor: pointer">help_outline</v-icon>
-                            </span>
-                            <span>Indicare i dati anagrafici se conosciuti e, in caso contrario, ogni altro elemento idoneo all'identificazione</span>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-icon
+                                v-bind="attrs"
+                                v-on="on"
+                                style="cursor: pointer"
+                                >help_outline</v-icon
+                              >
+                            </template>
+
+                            <span
+                              >Indicare i dati anagrafici se conosciuti e, in
+                              caso contrario, ogni altro elemento idoneo
+                              all'identificazione</span
+                            >
                           </v-tooltip>
                         </v-flex>
                       </v-layout>
@@ -277,17 +358,30 @@
                         </v-flex>
                         <v-flex xs1>
                           <v-tooltip bottom>
-                            <span slot="activator">
-                              <v-icon style="cursor: pointer">help_outline</v-icon>
-                            </span>
-                            <span>Indicare i dati anagrafici se conosciuti e, in caso contrario, ogni altro elemento idoneo all'identificazione</span>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-icon
+                                v-bind="attrs"
+                                v-on="on"
+                                style="cursor: pointer"
+                                >help_outline</v-icon
+                              >
+                            </template>
+
+                            <span
+                              >Indicare i dati anagrafici se conosciuti e, in
+                              caso contrario, ogni altro elemento idoneo
+                              all'identificazione</span
+                            >
                           </v-tooltip>
                         </v-flex>
                       </v-layout>
                     </v-flex>
                     <v-flex xs12>
                       <label>
-                        <strong>Eventuali allegati a sostegno della segnalazione</strong>
+                        <strong
+                          >Eventuali allegati a sostegno della
+                          segnalazione</strong
+                        >
                       </label>
                       <!-- <v-btn color="#3581b5" dark @click.native="openFileDialog">Caricare
                         <v-icon right dark>cloud_upload</v-icon>
@@ -299,14 +393,14 @@
                         id="file-upload"
                         @change="onFileChange"
                       > -->
-                      <p 
-                        v-for="file in datiSegnalazione.fileList" 
+                      <p
+                        v-for="file in datiSegnalazione.fileList"
                         :key="file.file"
                       >
                         <a
                           style="text-decoration: none;"
-                          :href="file.path + '/' +  file.file" 
-                          download 
+                          :href="file.path + '/' + file.file"
+                          download
                         >
                           <v-icon>save_alt</v-icon>
                           {{ file.file }}
@@ -333,7 +427,6 @@ import axios from "axios";
 import lodash from "lodash";
 import { endpoint } from "@/plugins/endpoint";
 
-
 export default {
   props: ["updatedForm"],
   data: () => ({
@@ -356,7 +449,7 @@ export default {
       sedeServizio: "",
       telefono: "",
       email: "",
-      valid: ""
+      valid: "",
     },
     datiSegnalazione: {
       menu1: false,
@@ -368,14 +461,14 @@ export default {
         options: [
           {
             name: "Ufficio",
-            text: "Indicare denominazione e indirizzo della struttura"
+            text: "Indicare denominazione e indirizzo della struttura",
           },
           {
             name: "All'esterno dell'ufficio",
-            text: "Indicare luogo ed indirizzo"
-          }
+            text: "Indicare luogo ed indirizzo",
+          },
         ],
-        value: ""
+        value: "",
       },
       azioniValore: {
         selected: [],
@@ -383,18 +476,18 @@ export default {
           "Penalmente rilevanti",
           "Poste in esere in violazione dei Codici di comportamento o di altre disposizioni sanzionabili in via disciplinare",
           "Suscettibili di arrecare un pregiudizio patrimoniale all'amministrazione di appartenenza o ad altro ente pubblico",
-          "Suscettibili di arrecare un pregiudizio alla immagine dell'amministrazione"
+          "Suscettibili di arrecare un pregiudizio alla immagine dell'amministrazione",
         ],
         altroChecked: false,
-        altroValue: ""
+        altroValue: "",
       },
       formId: null,
       descrizioneFatto: "",
       autori: [],
       altriEventualiSoggetti: [],
       eventualiAllegati: [],
-      fileList: []
-    }
+      fileList: [],
+    },
   }),
   computed: {
     dateDaFormatted() {
@@ -402,7 +495,7 @@ export default {
     },
     dateAFormatted() {
       return this.formatDate(this.datiSegnalazione.dateA);
-    }
+    },
   },
   methods: {
     dateChanged() {
@@ -421,7 +514,7 @@ export default {
     removeFile(name) {
       this.datiSegnalazione.fileList = lodash.dropWhile(
         this.datiSegnalazione.fileList,
-        file => file.name == name
+        (file) => file.name == name
       );
       // this.datiSegnalazione.fileList = fileList;
     },
@@ -430,7 +523,7 @@ export default {
       console.log("Files", files);
       if (files.length === 1) {
         if (
-          lodash.findIndex(this.datiSegnalazione.fileList, file => {
+          lodash.findIndex(this.datiSegnalazione.fileList, (file) => {
             return file.name == files[0].name;
           }) === -1
         ) {
@@ -439,7 +532,7 @@ export default {
       } else {
         for (let i = 0; i < files.length; i++) {
           if (
-            lodash.findIndex(this.datiSegnalazione.fileList, file => {
+            lodash.findIndex(this.datiSegnalazione.fileList, (file) => {
               return file.name == files[i].name;
             }) === -1
           ) {
@@ -509,10 +602,10 @@ export default {
       axios
         .post(`${endpoint}/api.php`, this.formData, {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         })
-        .then(response => {
+        .then((response) => {
           console.log("saved successfully");
           // response = JSON.parse(response.data);
           console.log("response", response.data);
@@ -535,10 +628,10 @@ export default {
       axios
         .post(`${endpoint}/api.php`, vm.formData, {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         })
-        .then(response => {
+        .then((response) => {
           console.log("fetch Comments response", response.data);
         });
     },
@@ -547,7 +640,7 @@ export default {
 
       axios
         .post(`${endpoint}/mailer.php`)
-        .then(response => {
+        .then((response) => {
           console.log("Mail response", response.data.code);
           let code = response.data.code;
           vm.code = code;
@@ -559,7 +652,7 @@ export default {
           vm.$emit("mail-sent", vm.code);
           vm.$emit("form-submit");
         });
-    }
+    },
   },
   mounted() {
     if (this.updatedForm.nome) {
@@ -631,9 +724,8 @@ export default {
     if (this.updatedForm.fileList) {
       this.datiSegnalazione.fileList = this.updatedForm.fileList;
     }
-  }
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

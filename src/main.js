@@ -3,6 +3,7 @@ import "./plugins/vuetify";
 import App from "./App.vue";
 import UploadButton from "vuetify-upload-button";
 import router from "./router";
+import vuetify from './plugins/vuetify'
 // import { VueReCaptcha } from "vue-recaptcha-v3";
 
 // For more options see below
@@ -16,5 +17,6 @@ Vue.config.productionTip = false;
 
 new Vue({
   router,
+  vuetify,
   render: h => h(App)
 }).$mount("#app");

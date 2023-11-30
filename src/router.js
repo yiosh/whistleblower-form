@@ -7,31 +7,31 @@ Vue.use(Router);
 
 export default new Router({
   mode: "history",
-  base: "/whistleblower",
+  base: "/app/whistleblower",
   routes: [
     {
       path: "/",
       name: "home",
-      component: Landing
+      component: Landing,
     },
     {
       path: "/form",
       name: "form",
       component: () =>
-        import(/* webpackChunkName: "form" */ "./views/Home.vue")
+        import(/* webpackChunkName: "form" */ "./views/Home.vue"),
     },
     {
       path: "/formlist",
       name: "formlist",
       props: true,
       component: () =>
-        import(/* webpackChunkName: "formlist" */ "./views/FormList.vue")
+        import(/* webpackChunkName: "formlist" */ "./views/FormList.vue"),
     },
     {
       path: "/form/:secret",
       name: "forms",
       component: () =>
-        import(/* webpackChunkName: "resultform" */ "./views/ResultForm.vue")
+        import(/* webpackChunkName: "resultform" */ "./views/ResultForm.vue"),
     },
     {
       path: "/thankyou",
@@ -41,11 +41,11 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () =>
-        import(/* webpackChunkName: "thankyou" */ "./views/ThankYou.vue")
+        import(/* webpackChunkName: "thankyou" */ "./views/ThankYou.vue"),
     },
     {
       path: "*",
-      redirect: "/"
-    }
-  ]
+      redirect: "/",
+    },
+  ],
 });

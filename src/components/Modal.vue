@@ -25,12 +25,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="handleSubmit"
-              >Login</v-btn
-            >
-            <v-btn color="blue darken-1" flat @click="dialog = false"
-              >Chiudi</v-btn
-            >
+            <v-btn color="primary" depressed @click="handleSubmit">Login</v-btn>
+            <v-btn depressed @click="dialog = false">Chiudi</v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
@@ -43,12 +39,11 @@ import EventBus from "@/eventBus.js";
 import axios from "axios";
 import { endpoint } from "@/plugins/endpoint";
 
-
 export default {
   data() {
     return {
       dialog: false,
-      password: ""
+      password: "",
     };
   },
   methods: {
@@ -61,39 +56,39 @@ export default {
         axios
           .post(`${endpoint}/api.php`, formData, {
             headers: {
-              "Content-Type": "multipart/form-data"
-            }
+              "Content-Type": "multipart/form-data",
+            },
           })
-          .then(response => {
+          .then((response) => {
             console.log("response", response);
             if (response.data.status === "OK") {
               this.dialog = false;
               this.$router.push({
-                path: "/formlist"
+                path: "/formlist",
               });
             } else {
               EventBus.$emit("snackbar", {
                 color: "error",
                 state: true,
-                text: "Password Errata!"
+                text: "Password Errata!",
               });
             }
           })
-          .catch(error => {
+          .catch((error) => {
             EventBus.$emit("snackbar", {
               color: "error",
               state: true,
-              text: "Errore di rete!"
+              text: "Errore di rete!",
             });
             console.log(error);
           });
       }
-    }
+    },
   },
   mounted() {
-    EventBus.$on("modal", payload => {
+    EventBus.$on("modal", (payload) => {
       this.dialog = payload;
     });
-  }
+  },
 };
 </script>
